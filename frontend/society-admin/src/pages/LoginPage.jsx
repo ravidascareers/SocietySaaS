@@ -6,7 +6,18 @@ import {
   Typography,
 } from "@mui/material";
 
+import { useNavigate } from "react-router-dom";
+
+import AppButton from "../components/ui/AppButton";
+
 function LoginPage() {
+
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    navigate("/dashboard")
+  };
+
   return (
     <div
       style={{
@@ -40,13 +51,9 @@ function LoginPage() {
             margin="normal"
           />
 
-          <Button
-            fullWidth
-            variant="contained"
-            style={{ marginTop: 20 }}
-          >
+          <AppButton onClick={handleLogin}>
             Login
-          </Button>
+          </AppButton>
         </CardContent>
       </Card>
     </div>
