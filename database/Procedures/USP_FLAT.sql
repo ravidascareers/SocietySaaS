@@ -1,0 +1,99 @@
+
+
+CREATE PROCEDURE USP_FLAT
+(
+@ACTION         VARCHAR(20),
+@TENANT_ID      INT = NULL,
+@TOWER_ID       INT = NULL,
+@FLAT_ID        INT = NULL,
+@FLAT_NO		VARCHAR(50) = NULL,
+@FLOOR_NO		INT = NULL,
+@AREA_SQFT		DECIMAL(12,2) = NULL, 
+@MAINTENANCE_RATE  DECIMAL(12,2) = NULL,
+@STATUS         VARCHAR(20) = NULL
+)
+AS
+BEGIN
+
+    IF @ACTION = 'GET'
+    BEGIN
+
+        SELECT F.FLAT_ID, F.TENANT_ID, F.TOWER_ID, T.TOWER_NAME,
+		F.FLAT_NO, F.FLOOR_NO, F.AREA_SQFT, F.MAINTENANCE_RATE, F.STATUS
+        FROM TB_FLATS F
+		INNER JOIN TB_TOWERS T ON F.TOWER_ID = T.TOWER_ID
+		WHERE F.TENANT_ID = @TENANT_ID
+
+    END
+
+    ELSE IF @ACTION = 'INSERT'
+    BEGIN
+
+        INSERT INTO TB_FLATS
+        (
+            TENANT_ID,
+			TOWER_ID,
+			FLAT_NO,
+			FLOOR_NO,
+			AREA_SQFT,
+			MAINTENANCE_RATE,
+			STATUS
+        )
+        VALUES
+        (
+            @TENANT_ID,
+            @TOWER_ID,
+			@FLAT_NO,
+			@FLOOR_NO,
+			@AREA_SQFT,
+			@MAINTENANCE_RATE,
+			@STATUS
+        )
+
+    END
+
+    ELSE IF @ACTION = 'UPDATE'
+    BEGIN
+
+        UPDATE TB_FLATS
+        SET
+		FLAT_NO = @FLAT_NO,
+			FLOOR_NO = @FLOOR_NO,
+			AREA_SQFT = @AREA_SQFT,
+			MAINTENANCE_RATE = @MAINTENANCE_RATE,
+			STATUS = @STATUS
+        WHERE FLAT_ID =
+            @FLAT_ID
+
+    END
+
+   ELSE IF @ACTION='DELETE' /*To be done*/
+BEGIN
+
+    IF EXISTS
+    (
+        SELECT 1
+        FROM TB_FLATS
+        WHERE TOWER_ID = @TOWER_ID
+    )
+    BEGIN
+
+        RAISERROR(
+            'Tower contains flats. Delete flats first.',
+            16,
+            1
+        )
+
+        RETURN
+
+    END
+
+    DELETE
+    FROM TB_TOWERS
+    WHERE
+        TOWER_ID = @TOWER_ID
+    AND TENANT_ID = @TENANT_ID
+
+END
+
+END
