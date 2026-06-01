@@ -1,8 +1,8 @@
 import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 
-//const API = "http://society-saas.somee.com/api/residents";
+const API = `${API_BASE_URL}/residents`;
 
-const API = "/api/residents";
 export const getResidents = () =>
     axios.get(API);
 
@@ -17,3 +17,6 @@ export const updateResident = (id, data) =>
 
 export const deleteResident = (id) =>
     axios.delete(`${API}/${id}`);
+
+
+//const API = "http://society-saas.somee.com/api/residents";

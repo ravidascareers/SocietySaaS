@@ -10,6 +10,11 @@ import { useNavigate } from "react-router-dom";
 
 import AppButton from "../components/ui/AppButton";
 
+console.log(
+  "API URL:",
+  import.meta.env.VITE_API_BASE_URL
+);
+
 function LoginPage() {
 
   const navigate = useNavigate();
