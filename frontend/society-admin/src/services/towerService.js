@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const API = "http://society-saas.somee.com/api/tower";
+//const API = "http://society-saas.somee.com/api/tower";
+
+const API = "/api/tower";
 
 export const getTowers = () =>
     axios.get(API);
