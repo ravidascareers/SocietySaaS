@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:5008/api/flat";
+const API = "http://society-saas.somee.com/api/flat";
 
 export const getFlats = () =>
     axios.get(API);
