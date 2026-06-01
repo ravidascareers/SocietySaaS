@@ -1,7 +1,8 @@
 import axios from "axios";
 
-const API = "http://society-saas.somee.com/api/residents";
+//const API = "http://society-saas.somee.com/api/residents";
 
+const API = "/api/residents";
 export const getResidents = () =>
     axios.get(API);
 
