@@ -20,6 +20,8 @@ namespace SocietyManagementAPI.Controllers
         [HttpGet]
         public IActionResult GetFlats()
         {
+            try
+            {
             var result =
                 _db.ExecuteList(
 
@@ -35,11 +37,24 @@ namespace SocietyManagementAPI.Controllers
                 );
 
             return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        error = ex.Message,
+                        stack = ex.StackTrace
+                    });
+            }
         }
 
         [HttpPost]
         public IActionResult AddFlat(FlatModel model)
         {
+            try
+            {
             _db.ExecuteNonQuery(
 
                 "USP_FLAT",
@@ -88,10 +103,23 @@ namespace SocietyManagementAPI.Controllers
                         "Flat Created"
                 });
         }
+        catch(Exception ex)
+            {
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        error = ex.Message,
+                        stack = ex.StackTrace
+                    });
+            }
+        }
 
         [HttpPut("{id}")]
         public IActionResult UpdateFlat(int id, FlatModel model)
         {
+            try
+            {
             _db.ExecuteNonQuery(
 
                 "USP_FLAT",
@@ -137,11 +165,22 @@ namespace SocietyManagementAPI.Controllers
                     model.ModifiedBy)
             );
 
-            return Ok(new
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Flat Updated"
+                });
+            }
+        catch(Exception ex)
             {
-                Success = true,
-                Message = "Flat Updated"
-            });
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        error = ex.Message,
+                        stack = ex.StackTrace
+                    });
+            }
         }
     }
 

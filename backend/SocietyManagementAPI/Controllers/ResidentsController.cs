@@ -21,6 +21,8 @@ namespace SocietyManagementAPI.Controllers
         [HttpGet]
         public IActionResult GetResidents()
         {
+            try
+            {
             var result =
                 _db.ExecuteList(
 
@@ -36,11 +38,24 @@ namespace SocietyManagementAPI.Controllers
                 );
 
             return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        error = ex.Message,
+                        stack = ex.StackTrace
+                    });
+            }
         }
     
         [HttpGet("{id}")]
         public IActionResult GetResidentById(int id)
         {
+            try
+            {
             var result =
                 _db.ExecuteList(
 
@@ -56,6 +71,17 @@ namespace SocietyManagementAPI.Controllers
                 );
 
             return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        error = ex.Message,
+                        stack = ex.StackTrace
+                    });
+            }
         }
     
         [HttpPost]

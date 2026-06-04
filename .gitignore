@@ -28,3 +28,7 @@ Thumbs.db
 
 # Mac
 .DS_Store
+
+# Backend secrets
+backend/SocietyManagementAPI/appsettings.json
+backend/SocietyManagementAPI/appsettings.Development.json

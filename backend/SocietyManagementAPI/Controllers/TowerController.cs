@@ -20,6 +20,8 @@ namespace SocietyManagementAPI.Controllers
         [HttpGet]
         public IActionResult GetTowers()
         {
+            try
+            {
             var result =
                 _db.ExecuteList(
 
@@ -35,11 +37,24 @@ namespace SocietyManagementAPI.Controllers
                 );
 
             return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        error = ex.Message,
+                        stack = ex.StackTrace
+                    });
+            }
         }
 
         [HttpPost]
         public IActionResult AddTower(TowerModel model)
         {
+            try
+            {
             _db.ExecuteNonQuery(
 
                 "USP_TOWER",
@@ -75,11 +90,24 @@ namespace SocietyManagementAPI.Controllers
                     message =
                         "Tower Created"
                 });
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        error = ex.Message,
+                        stack = ex.StackTrace
+                    });
+            }
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateTower(int id, TowerModel model)
         {
+            try
+            {
             _db.ExecuteNonQuery(
 
                 "USP_TOWER",
@@ -113,17 +141,29 @@ namespace SocietyManagementAPI.Controllers
                     model.ModifiedBy)
             );
 
-            return Ok(new
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Tower Updated"
+                });
+            }
+            catch(Exception ex)
             {
-                Success = true,
-                Message = "Tower Updated"
-            });
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        error = ex.Message,
+                        stack = ex.StackTrace
+                    });
+            }
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteTower(
-            int id)
+        public IActionResult DeleteTower(int id)
         {
+            try
+            {
             _db.ExecuteNonQuery(
 
                 "USP_TOWER",
@@ -146,6 +186,17 @@ namespace SocietyManagementAPI.Controllers
                 Success = true,
                 Message = "Tower Deleted"
             });
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        error = ex.Message,
+                        stack = ex.StackTrace
+                    });
+            }
         }
     }  
 }
