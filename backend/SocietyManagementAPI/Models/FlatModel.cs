@@ -8,7 +8,7 @@ namespace SocietyManagementAPI.Models
 
         public int TenantId { get; set; }
 
-        public string FlatNo { get; set; }
+        public string? FlatNo { get; set; }
 
         public int FloorNo { get; set; }
 
@@ -16,6 +16,14 @@ namespace SocietyManagementAPI.Models
 
         public decimal MaintenanceRate {get;set;}
 
-        public string Status { get; set; }
+        public string? Status { get; set; }
+
+        public int? CreatedBy { get; set; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        public int? ModifiedBy { get; set; }
+
+        public DateTime? ModifiedDate { get; set; }
     }
 }

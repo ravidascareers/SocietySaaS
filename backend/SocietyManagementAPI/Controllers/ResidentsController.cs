@@ -224,7 +224,11 @@ namespace SocietyManagementAPI.Controllers
 
                 new SqlParameter(
                     "@REMARKS",
-                    model.Remarks)
+                    model.Remarks),
+
+                new SqlParameter(
+                    "@CREATED_BY",
+                    model.CreatedBy)
             );
 
             return Ok(
@@ -404,14 +408,18 @@ namespace SocietyManagementAPI.Controllers
 
                 new SqlParameter(
                     "@REMARKS",
-                    model.Remarks)
+                    model.Remarks),
+
+                new SqlParameter(
+                    "@MODIFIED_BY",
+                    model.ModifiedBy)
             );
 
             return Ok(
                 new
                 {
                     message =
-                        "Resident Created"
+                        "Resident Updated"
                 });
         }
 

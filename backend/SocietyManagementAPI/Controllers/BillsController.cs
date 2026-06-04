@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using SocietyManagementAPI.Helpers;
 using SocietyManagementAPI.Models;
 
 namespace SocietyManagementAPI.Controllers
@@ -8,21 +9,19 @@ namespace SocietyManagementAPI.Controllers
     [Route("api/[controller]")]
     public class BillsController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+       private readonly DbHelper _db;
 
-        public BillsController(
-            IConfiguration configuration)
+        public BillsController(DbHelper db)
         {
-            _configuration = configuration;
+           _db = db;
         }
 
      [HttpPost("generate")]
-public IActionResult GenerateBills(
+    public IActionResult GenerateBills(
     [FromBody] GenerateBillRequest request)
 {
-    string connectionString =
-        _configuration.GetConnectionString(
-            "DefaultConnection");
+    /*
+    string connectionString = configuration.GetConnectionString("DefaultConnection");
 
             int insertedCount = 0;
 
@@ -188,13 +187,18 @@ public IActionResult GenerateBills(
         {
             message =
                 "Bills generated successfully"
+        });*/
+ return Ok(new
+        {
+            message =
+                "Abandonded"
         });
-
 }
         
         [HttpGet]
         public IActionResult GetBills(int tenantId = 1)
         {
+            /*
             var bills = new List<object>();
 
             string connectionString =
@@ -266,7 +270,12 @@ public IActionResult GenerateBills(
                 }
             }
 
-            return Ok(bills);
+            return Ok(bills);*/
+            return Ok(new
+        {
+            message =
+                "Abandonded"
+        });
         }
     }
 }

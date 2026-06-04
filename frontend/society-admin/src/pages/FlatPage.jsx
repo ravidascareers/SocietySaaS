@@ -10,6 +10,11 @@ import {
 } from "../services/flatService";
 
 import {
+    getTenantId,
+    getUserId
+} from "../utils/session";
+
+import {
     useEffect,
     useState,
 } from "react"
@@ -30,24 +35,19 @@ import FlatForm from "../components/flats/FlatForm";
 
 function FlatPage() {
 
-    const [open, setOpen] =
-        useState(false);
+    const [open, setOpen] = useState(false);
 
-    const [editMode, setEditMode] =
-        useState(false);
+    const [editMode, setEditMode] = useState(false);
 
-    const [formData, setFormData] =
-        useState({
-
-            flatId: 0,
-            towerName: "",
-            flatNo: "",
-            floorNo: "",
-            areaSqFt: "",
-            maintenanceRate: "",
-            status: "Vacant",
-
-        });
+    const [formData, setFormData] = useState({
+        towerId: 0,
+        flatId: 0,
+        flatNo: "",
+        floorNo: "",
+        areaSqFt: "",
+        maintenanceRate: "",
+        status: "Vacant",
+    });
 
     const [flats, setFlats] = useState([]);
     const [towerOptions, setTowerOptions] = useState([]);
@@ -154,7 +154,7 @@ function FlatPage() {
                     formData.flatId,
 
                     {
-                        tenantId: 1,
+                        tenantId: getTenantId(),
                         towerId: formData.towerId,
                         flatId: formData.flatId,
                         flatNo: formData.flatNo,
@@ -162,6 +162,7 @@ function FlatPage() {
                         areaSqFt: formData.areaSqFt,
                         maintenanceRate: formData.maintenanceRate,
                         status: formData.status,
+                        modifiedBy: getUserId()
                     }
                 );
 
@@ -170,13 +171,14 @@ function FlatPage() {
 
                 await addFlat({
 
-                    tenantId: 1,
+                    tenantId: getTenantId(),
                     towerId: formData.towerId,
                     flatNo: formData.flatNo,
                     floorNo: formData.floorNo,
                     areaSqFt: formData.areaSqFt,
                     maintenanceRate: formData.maintenanceRate,
                     status: formData.status,
+                    createdBy: getUserId(),
                 });
 
             }
@@ -196,35 +198,12 @@ function FlatPage() {
 
     };
 
-    const handleDelete =
-        async (residentId) => {
-
-            try {
-
-                await deleteResident(
-                    residentId
-                );
-
-                await loadResidents();
-
-            }
-            catch (error) {
-
-                console.error(
-                    error
-                );
-
-            }
-
-        };
-
     const handleEdit = (row) => {
 
         setEditMode(true);
 
         setFormData({
 
-            tenantId: 1,
             towerId: row.TOWER_ID ?? row.towerId,
             flatId: row.FLAT_ID ?? row.flatId,
 
@@ -235,11 +214,33 @@ function FlatPage() {
             maintenanceRate: row.MAINTENANCE_RATE ?? row.maintenanceRate,
 
             status: row.STATUS ?? row.status,
+
         });
 
         setOpen(true);
 
     };
+
+    const handleDelete = async (flatId) => {
+
+        try {
+
+            await deleteFlat(
+                flatId
+            );
+
+            await loadFlats();
+
+        }
+        catch (error) {
+
+            console.error(
+                error
+            );
+        }
+    };
+
+
 
     const columns = [
 
@@ -310,33 +311,8 @@ function FlatPage() {
 
                     type="primary"
 
-                    onClick={async () => {
-
-                        try {
-
-                            const response =
-
-                                await getResidentById(
-                                    params.row.residentId
-                                );
-
-                            setFormData(
-                                response.data[0]
-                            );
-
-                            setEditMode(true);
-
-                            setOpen(true);
-
-                        }
-                        catch (error) {
-
-                            console.error(
-                                error
-                            );
-
-                        }
-
+                    onClick={() => {
+                        handleEdit(params.row);
                     }}
 
                 />
@@ -352,41 +328,25 @@ function FlatPage() {
             <AppPage>
 
                 <AppHeader
-
                     title="Flat Master"
-
-                    subtitle="Green Valley Society"
-
                     action={
-
                         <AppButton
-
                             onClick={() => {
-
                                 setEditMode(false);
-
                                 setFormData({
-
                                     towerId: 0,
-
-                                    towerName: "",
-
-                                    totalFloors: "",
-
-                                    status: "Active",
-
+                                    flatId: 0,
+                                    flatNo: "",
+                                    floorNo: "",
+                                    areaSqFt: "",
+                                    maintenanceRate: "",
+                                    status: "Vacant"
                                 });
-
                                 setOpen(true);
-
                             }}
-
                         >
-
                             Add Flat
-
                         </AppButton>
-
                     }
 
                 />
@@ -396,7 +356,7 @@ function FlatPage() {
                         gridTemplateColumns:
                             "repeat(3, 1fr)",
                         gap: 2,
-                        mb: 2,
+                        mb: 0.5,
                     }}
                 >
                     <SummaryCard

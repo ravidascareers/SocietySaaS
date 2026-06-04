@@ -8,12 +8,18 @@ import { getTowers } from "../services/towerService";
 import { getFlats } from "../services/flatService";
 
 import {
+    getTenantId,
+    getUserId
+} from "../utils/session";
+
+import {
     getResidents,
     getResidentById,
     addResident,
     updateResident,
     deleteResident,
 } from "../services/residentService";
+
 
 import EditIcon from "@mui/icons-material/Edit";
 import HistoryIcon from "@mui/icons-material/History";
@@ -38,8 +44,6 @@ function ResidentsPage() {
     const emptyResident = {
 
         residentId: 0,
-
-        tenantId: 1,
 
         towerId: "",
 
@@ -159,19 +163,21 @@ function ResidentsPage() {
             ) {
 
                 await updateResident(
-
                     formData.residentId,
-
-                    formData
-
+                    {
+                        ...formData,
+                        tenantId: getTenantId(),
+                        ModifiedBy: getUserId(),
+                    }
                 );
 
             }
             else {
-
-                await addResident(
-                    formData
-                );
+                await addResident({
+                    ...formData,
+                    tenantId: getTenantId(),
+                    createdBy: getUserId(),
+                });
 
             }
 
@@ -464,9 +470,7 @@ function ResidentsPage() {
             <AppPage>
 
                 <AppHeader
-
                     title="Residents"
-                    subtitle="Green Valley Society"
                     action={
 
                         <AppButton
@@ -494,7 +498,7 @@ function ResidentsPage() {
                         gridTemplateColumns:
                             "repeat(3, 1fr)",
                         gap: 2,
-                        mb: 2,
+                        mb: 0.5,
                     }}
                 >
 

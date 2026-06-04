@@ -1,93 +1,99 @@
 import {
     Box,
     Typography,
+    Avatar
 } from "@mui/material";
 
+import ApartmentIcon from "@mui/icons-material/Apartment";
+
+import {
+    getTenantName
+} from "../../utils/session";
+
 function AppHeader({
-
-    title = "",
-
-    subtitle = "",
-
-    action = null,
-
+    title,
+    action
 }) {
+
+    const tenantName =
+        getTenantName();
 
     return (
 
         <Box
             sx={{
-
                 display: "flex",
-
+                justifyContent: "space-between",
                 alignItems: "center",
-
-                justifyContent:
-                    "space-between",
-
-                gap: 2,
-
-                minHeight: 48,
+                mb: 0.5
             }}
         >
 
-            {/* LEFT SECTION */}
             <Box>
 
                 <Typography
                     variant="h5"
-
                     sx={{
-
                         fontWeight: 700,
-
-                        color: "#111827",
-
-                        lineHeight: 1.2,
+                        color: "#0f172a",
+                        mb: 0.5
                     }}
                 >
                     {title}
                 </Typography>
 
-                {subtitle && (
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        mt: 0.25
+                    }}
+                >
 
-                    <Typography
-                        variant="body2"
-
+                    <Box
                         sx={{
-
-                            color: "#6b7280",
-
-                            mt: 0.3,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            px: 1.5,
+                            py: 0.5,
+                            borderRadius: 5,
+                            backgroundColor: "#f1f5f9",
+                            border: "1px solid #e2e8f0"
                         }}
                     >
-                        {subtitle}
-                    </Typography>
 
-                )}
+                        <ApartmentIcon
+                            sx={{
+                                fontSize: 16,
+                                color: "#64748b"
+                            }}
+                        />
+
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                fontWeight: 600,
+                                color: "#475569",
+                                letterSpacing: "0.2px"
+                            }}
+                        >
+                            {tenantName}
+                        </Typography>
+
+                    </Box>
+
+                </Box>
 
             </Box>
 
-            {/* RIGHT ACTIONS */}
-            <Box
-                sx={{
-
-                    display: "flex",
-
-                    alignItems: "center",
-
-                    gap: 1,
-                }}
-            >
-
+            <Box>
                 {action}
-
             </Box>
 
         </Box>
 
     );
-
 }
 
 export default AppHeader;

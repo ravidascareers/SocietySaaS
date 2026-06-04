@@ -8,7 +8,21 @@ import {
     ListItemIcon,
     ListItemText,
     Box,
+    Avatar
 } from "@mui/material";
+
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Divider from "@mui/material/Divider";
+
+import {
+    getUserName,
+    getTenantName,
+    clearSession,
+    isLoggedIn
+}
+    from "../utils/session";
+
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
@@ -17,10 +31,32 @@ import PaymentsIcon from "@mui/icons-material/Payments";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+import { Navigate } from "react-router-dom";
+
+import AppButton from "../components/ui/AppButton";
+
 
 function MainLayout({ children }) {
 
     const navigate = useNavigate();
+
+    if (!isLoggedIn()) {
+
+        return (
+            <Navigate
+                to="/"
+                replace
+            />
+        );
+    }
+
+
+    const handleLogout = () => {
+        clearSession();
+        navigate("/");
+    }
 
     const menuItems = [
 
@@ -62,6 +98,21 @@ function MainLayout({ children }) {
 
     ];
 
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const open = Boolean(anchorEl);
+
+    const handleAvatarClick = (event) => {
+        setAnchorEl(
+            event.currentTarget
+        );
+    };
+
+    const handleClose = () => {
+
+        setAnchorEl(null);
+    };
+
     return (
 
         <Box
@@ -86,7 +137,13 @@ function MainLayout({ children }) {
                 }}
             >
 
-                <Toolbar>
+                <Toolbar
+                   variant="dense"
+                    sx={{
+                        display: "flex",
+                        justifyContent: "space-between"
+                    }}
+                >
 
                     <Box
                         sx={{
@@ -106,6 +163,110 @@ function MainLayout({ children }) {
                         >
                             Society SaaS
                         </Typography>
+
+                    </Box>
+
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center"
+                        }}
+                    >
+
+                        <Avatar
+                            onClick={handleAvatarClick}
+                            sx={{
+                                width: 36,
+                                height: 36,
+                                cursor: "pointer",
+                                bgcolor: "primary.main",
+                                fontWeight: 600,
+                                fontSize: "0.95rem"
+                            }}
+                        >
+                            {getUserName()?.charAt(0)}
+                        </Avatar>
+
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            PaperProps={{
+                                elevation: 8,
+                                sx: {
+                                    mt: 1.5,
+                                    borderRadius: 3,
+                                    overflow: "hidden"
+                                }
+                            }}
+                            anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "right"
+                            }}
+                            transformOrigin={{
+                                vertical: "top",
+                                horizontal: "right"
+                            }}
+                        >
+
+                            <Box
+                                sx={{
+                                    width: 180,
+                                    p: 2,
+                                    textAlign: "center"
+                                }}
+                            >
+
+                                <Avatar
+                                    sx={{
+                                        width: 42,
+                                        height: 42,
+                                        mx: "auto",
+                                        mb: 1,
+                                        bgcolor: "primary.main"
+                                    }}
+                                >
+                                    {getUserName()?.charAt(0)}
+                                </Avatar>
+
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        fontWeight: 600,
+                                        lineHeight: 1.3
+                                    }}
+                                >
+                                    {getUserName()}
+                                </Typography>
+
+                                <Typography
+                                    variant="caption"
+                                    color="text.secondary"
+                                >
+                                    {getTenantName()}
+                                </Typography>
+
+                            </Box>
+
+                            <Divider />
+
+                            <MenuItem
+                                onClick={() => {
+
+                                    clearSession();
+
+                                    navigate("/");
+                                }}
+                                sx={{
+                                    color: "error.main",
+                                    fontWeight: 600,
+                                    justifyContent: "center"
+                                }}
+                            >
+                                Logout
+                            </MenuItem>
+
+                        </Menu>
 
                     </Box>
 
@@ -133,9 +294,9 @@ function MainLayout({ children }) {
 
                         borderRight: "none",
 
-                        marginTop: "64px",
+                        marginTop: "48px",
 
-                        height: "calc(100vh - 64px)",
+                        height: "calc(100vh - 48px)",
 
                         overflow: "hidden",
                     },
@@ -196,7 +357,7 @@ function MainLayout({ children }) {
                     flexGrow: 1,
                     display: "flex",
                     flexDirection: "column",
-                    marginTop: "64px",
+                    marginTop: "48px",
                     overflow: "hidden",
                     minWidth: 0,
                 }}

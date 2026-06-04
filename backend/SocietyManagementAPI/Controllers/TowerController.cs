@@ -62,7 +62,11 @@ namespace SocietyManagementAPI.Controllers
 
                 new SqlParameter(
                     "@STATUS",
-                    model.Status)
+                    model.Status),
+
+                new SqlParameter(
+                    "@CREATED_BY",
+                    model.CreatedBy)
             );
 
             return Ok(
@@ -102,7 +106,11 @@ namespace SocietyManagementAPI.Controllers
 
                 new SqlParameter(
                     "@STATUS",
-                    model.Status)
+                    model.Status),
+
+                new SqlParameter(
+                    "@MODIFIED_BY",
+                    model.ModifiedBy)
             );
 
             return Ok(new

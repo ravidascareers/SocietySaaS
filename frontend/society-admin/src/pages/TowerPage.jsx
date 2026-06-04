@@ -11,6 +11,11 @@ import {
 } from "../services/towerService";
 
 import {
+    getTenantId,
+    getUserId
+} from "../utils/session";
+
+import {
     useEffect,
     useState,
 } from "react"
@@ -28,6 +33,10 @@ import ActionChip from "../components/ui/ActionChip";
 import SummaryCard from "../components/ui/SummaryCard";
 
 import TowerForm from "../components/towers/TowerForm";
+
+import { useAuth } from "../context/AuthContext";
+
+
 
 function TowerPage() {
 
@@ -116,7 +125,7 @@ function TowerPage() {
                     formData.towerId,
 
                     {
-                        tenantId: 1,
+                        tenantId: getTenantId(),
 
                         towerName:
                             formData.towerName,
@@ -128,6 +137,8 @@ function TowerPage() {
 
                         status:
                             formData.status,
+
+                        modifiedBy: getUserId(),
                     }
                 );
 
@@ -136,7 +147,7 @@ function TowerPage() {
 
                 await addTower({
 
-                    tenantId: 1,
+                    tenantId: getTenantId(),
 
                     towerName:
                         formData.towerName,
@@ -148,6 +159,8 @@ function TowerPage() {
 
                     status:
                         formData.status,
+
+                    createdBy: getUserId()
                 });
 
             }
@@ -273,39 +286,22 @@ function TowerPage() {
                 <AppHeader
 
                     title="Tower Master"
-                    subtitle="Green Valley Society"
                     action={
-
                         <AppButton
-
                             onClick={() => {
-
                                 setEditMode(false);
-
                                 setFormData({
-
                                     towerId: 0,
-
                                     towerName: "",
-
                                     totalFloors: "",
-
                                     status: "Active",
-
                                 });
-
                                 setOpen(true);
-
                             }}
-
                         >
-
                             Add Tower
-
                         </AppButton>
-
                     }
-
                 />
                 <Box
                     sx={{
@@ -313,7 +309,7 @@ function TowerPage() {
                         gridTemplateColumns:
                             "repeat(3, 1fr)",
                         gap: 2,
-                        mb: 2,
+                        mb: 0.5,
                     }}
                 >
 

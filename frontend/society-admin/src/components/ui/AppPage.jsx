@@ -23,7 +23,7 @@ function AppPage({ children }) {
 
                 p: 1.5,
 
-                gap: 1.5,
+                gap: 0.1,
 
                 boxSizing: "border-box",
             }}

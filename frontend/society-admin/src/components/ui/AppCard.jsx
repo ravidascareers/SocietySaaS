@@ -27,7 +27,11 @@ function AppCard({
                 backgroundColor:
                     "#ffffff",
 
-              
+                display: "flex",
+
+                flexDirection: "column",
+
+                minHeight: 0,
 
                 ...sx,
             }}
@@ -36,7 +40,15 @@ function AppCard({
             <CardContent
                 sx={{
 
-                    p: 2,
+                    p: 1.5,
+
+                    flex: 1,
+
+                    minHeight: 0,
+
+                    display: "flex",
+
+                    flexDirection: "column",
 
                     "&:last-child": {
                         pb: 2,

@@ -21,6 +21,8 @@ function AppDataGrid({
 
         <DataGrid
 
+
+
             rows={rows}
 
             columns={columns}
@@ -31,10 +33,8 @@ function AppDataGrid({
 
             disableRowSelectionOnClick
 
-            autoHeight
-
             density="compact"
-            rowHeight={36}
+            rowHeight={44}
             columnHeaderHeight={36}
 
             slots={{
@@ -64,6 +64,7 @@ function AppDataGrid({
 
             sx={{
                 width: "100%",
+                height:"100%",
 
                 border: "none",
 
