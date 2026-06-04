@@ -3,8 +3,8 @@ import { API_BASE_URL } from "../config/api";
 
 const API = `${API_BASE_URL}/residents`;
 
-export const getResidents = () =>
-    axios.get(API);
+export const getResidents = (tenantId) =>
+    axios.get(`${API}?tenantId=${tenantId}`)
 
 export const getResidentById = (id) =>
     axios.get(`${API}/${id}`);

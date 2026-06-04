@@ -36,7 +36,7 @@ import TowerForm from "../components/towers/TowerForm";
 
 import { useAuth } from "../context/AuthContext";
 
-
+import { mapListToCamelCase } from "../utils/objectMapperUtil";
 
 function TowerPage() {
 
@@ -67,25 +67,12 @@ function TowerPage() {
         try {
 
             const response =
-                await getTowers();
+                await getTowers(getTenantId());
 
             setTowers(
 
-                response.data.map(
-                    x => ({
-
-                        towerId:
-                            x.TOWER_ID,
-
-                        towerName:
-                            x.TOWER_NAME,
-
-                        totalFloors:
-                            x.TOTAL_FLOORS,
-
-                        status:
-                            x.STATUS,
-                    })
+                mapListToCamelCase(
+                    response.data
                 )
             );
 
@@ -274,7 +261,7 @@ function TowerPage() {
 
     useEffect(() => {
 
-        loadTowers();
+        loadTowers(getTenantId());
 
     }, []);
 

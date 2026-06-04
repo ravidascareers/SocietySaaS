@@ -18,7 +18,7 @@ namespace SocietyManagementAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTowers()
+        public IActionResult GetTowers(int tenantId)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace SocietyManagementAPI.Controllers
 
                     new SqlParameter(
                         "@TENANT_ID",
-                        1)
+                        tenantId)
                 );
 
             return Ok(result);

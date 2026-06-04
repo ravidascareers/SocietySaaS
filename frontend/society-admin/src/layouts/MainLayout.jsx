@@ -15,6 +15,18 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
 
+import { getMenus } from "../services/menuService";
+import { buildMenuTree } from "../utils/menuUtils";
+
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+
+import Collapse from "@mui/material/Collapse";
+
+import TextField from "@mui/material/TextField";
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
+
 import {
     getUserName,
     getTenantName,
@@ -36,6 +48,7 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 import AppButton from "../components/ui/AppButton";
+import { mapListToCamelCase } from "../utils/objectMapperUtil";
 
 
 function MainLayout({ children }) {
@@ -58,45 +71,82 @@ function MainLayout({ children }) {
         navigate("/");
     }
 
-    const menuItems = [
+    useEffect(() => {
 
-        {
-            text: "Dashboard",
-            icon: <DashboardIcon />,
-            path: "/dashboard",
-        },
+        loadMenus();
 
-        {
-            text: "Towers",
-            icon: <ApartmentIcon />,
-            path: "/towers",
-        },
+    }, []);
 
-        {
-            text: "Flats",
-            icon: <ApartmentIcon />,
-            path: "/flats",
-        },
+    const loadMenus = async () => {
 
-        {
-            text: "Residents",
-            icon: <PeopleIcon />,
-            path: "/residents",
-        },
+        try {
 
-        {
-            text: "Billing",
-            icon: <ReceiptLongIcon />,
-            path: "/billing",
-        },
+            const data =
+            mapListToCamelCase(
+                await getMenus()
+            );
 
-        {
-            text: "Payments",
-            icon: <PaymentsIcon />,
-            path: "/payments",
-        },
+            const tree =
+                buildMenuTree(data);
 
-    ];
+
+            setMenus(tree);
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+        }
+    };
+
+    const [menus, setMenus] = useState([]);
+
+    const [searchText, setSearchText] = useState("");
+
+    const [openMenus, setOpenMenus] = useState({});
+
+    const handleMenuToggle =
+        (menuId) => {
+
+            setOpenMenus(prev => ({
+
+                ...prev,
+
+                [menuId]:
+                    !prev[menuId]
+
+            }));
+
+        };
+
+    const filteredMenus =
+        menus.filter(parent => {
+
+            if (!searchText)
+                return true;
+
+            const search =
+                searchText.toLowerCase();
+
+            return (
+
+                parent.menuName
+                    ?.toLowerCase()
+                    .includes(search)
+
+                ||
+
+                parent.children?.some(
+                    child =>
+                        child.menuName
+                            ?.toLowerCase()
+                            .includes(search)
+                )
+
+            );
+
+        });
 
     const [anchorEl, setAnchorEl] = useState(null);
 
@@ -138,7 +188,7 @@ function MainLayout({ children }) {
             >
 
                 <Toolbar
-                   variant="dense"
+                    variant="dense"
                     sx={{
                         display: "flex",
                         justifyContent: "space-between"
@@ -303,47 +353,208 @@ function MainLayout({ children }) {
                 }}
             >
 
-                <List
+                <Box
                     sx={{
-                        paddingTop: 2,
+                        p: 1.5
                     }}
                 >
 
-                    {menuItems.map((item) => (
+                    <TextField
+                        size="small"
+                        fullWidth
+                        placeholder="Search Menu"
+                        value={searchText}
+                        onChange={(e) =>
+                            setSearchText(
+                                e.target.value
+                            )
+                        }
+                        sx={{
+                            mb: 1,
 
-                        <ListItemButton
-                            key={item.text}
+                            "& .MuiOutlinedInput-root":
+                            {
+                                color: "#fff",
 
-                            onClick={() =>
-                                navigate(item.path)
-                            }
+                                backgroundColor:
+                                    "#1e293b",
 
-                            sx={{
-                                mx: 1,
-                                mb: 0.5,
                                 borderRadius: 2,
+                            }
+                        }}
+                    />
 
-                                "&:hover": {
-                                    backgroundColor:
-                                        "rgba(255,255,255,0.08)",
-                                },
-                            }}
+                </Box>
+
+                <List
+                    sx={{
+                        pt: 0
+                    }}
+                >
+
+                    {filteredMenus.map(parent => (
+
+                        <Box
+                            key={parent.menuId}
                         >
 
-                            <ListItemIcon
+                            {/* Parent */}
+
+                            <ListItemButton
+
+                                onClick={() => {
+
+                                    if (
+                                        parent.children
+                                            ?.length > 0
+                                    ) {
+
+                                        handleMenuToggle(
+                                            parent.menuId
+                                        );
+
+                                    }
+                                    else if (
+                                        parent.menuPath
+                                    ) {
+
+                                        navigate(
+                                            parent.menuPath
+                                        );
+
+                                    }
+
+                                }}
+
                                 sx={{
-                                    color: "#fff",
-                                    minWidth: "40px",
+                                    mx: 1,
+                                    mb: 0.5,
+                                    borderRadius: 2,
+
+                                    "&:hover": {
+                                        backgroundColor:
+                                            "rgba(255,255,255,0.08)"
+                                    }
                                 }}
                             >
-                                {item.icon}
-                            </ListItemIcon>
 
-                            <ListItemText
-                                primary={item.text}
-                            />
+                                <ListItemText
+                                    primary={
+                                        parent.menuName
+                                    }
+                                />
 
-                        </ListItemButton>
+                                {
+
+                                    parent.children
+                                        ?.length > 0
+
+                                        ?
+
+                                        (
+                                            openMenus[
+                                                parent.menuId
+                                            ]
+
+                                                ?
+
+                                                <ExpandLess />
+
+                                                :
+
+                                                <ExpandMore />
+                                        )
+
+                                        :
+
+                                        null
+                                }
+
+                            </ListItemButton>
+
+                            {/* Child */}
+
+                            <Collapse
+
+                                in={
+                                    openMenus[
+                                    parent.menuId
+                                    ]
+                                }
+
+                                timeout="auto"
+
+                                unmountOnExit
+                            >
+
+                                <List
+                                    disablePadding
+                                >
+
+                                    {
+                                        parent.children
+                                            ?.filter(
+                                                child =>
+
+                                                    !searchText
+
+                                                    ||
+
+                                                    child
+                                                        .menuName
+                                                        ?.toLowerCase()
+                                                        .includes(
+                                                            searchText
+                                                                .toLowerCase()
+                                                        )
+                                            )
+                                            .map(child => (
+
+                                                <ListItemButton
+
+                                                    key={
+                                                        child.menuId
+                                                    }
+
+                                                    onClick={() =>
+                                                        navigate(
+                                                            child.menuPath
+                                                        )
+                                                    }
+
+                                                    sx={{
+                                                        pl: 4,
+
+                                                        mx: 1,
+
+                                                        mb: 0.5,
+
+                                                        borderRadius: 2,
+
+                                                        "&:hover":
+                                                        {
+                                                            backgroundColor:
+                                                                "rgba(255,255,255,0.08)"
+                                                        }
+                                                    }}
+                                                >
+
+                                                    <ListItemText
+                                                        primary={
+                                                            child.menuName
+                                                        }
+                                                    />
+
+                                                </ListItemButton>
+
+                                            ))
+                                    }
+
+                                </List>
+
+                            </Collapse>
+
+                        </Box>
 
                     ))}
 

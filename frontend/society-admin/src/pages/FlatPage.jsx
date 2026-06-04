@@ -32,6 +32,7 @@ import ActionChip from "../components/ui/ActionChip";
 import SummaryCard from "../components/ui/SummaryCard";
 
 import FlatForm from "../components/flats/FlatForm";
+import { mapListToCamelCase } from "../utils/objectMapperUtil";
 
 function FlatPage() {
 
@@ -65,22 +66,12 @@ function FlatPage() {
         try {
 
             const response =
-                await getFlats();
+                await getFlats(getTenantId());
 
             setFlats(
 
-                response.data.map(
-                    x => ({
-                        flatId: x.FLAT_ID,
-                        tenantId: x.TENANT_ID,
-                        towerId: x.TOWER_ID,
-                        towerName: x.TOWER_NAME,
-                        flatNo: x.FLAT_NO,
-                        floorNo: x.FLOOR_NO,
-                        areaSqFt: x.AREA_SQFT,
-                        maintenanceRate: x.MAINTENANCE_RATE,
-                        status: x.STATUS,
-                    })
+                mapListToCamelCase(
+                    response.data
                 )
             );
 
@@ -99,7 +90,7 @@ function FlatPage() {
         try {
 
             const response =
-                await getTowers();
+                await getTowers(getTenantId());
 
             setTowerOptions(
 

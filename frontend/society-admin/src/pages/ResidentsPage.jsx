@@ -246,7 +246,7 @@ function ResidentsPage() {
         try {
 
             const response =
-                await getResidents();
+                await getResidents(getTenantId());
 
             setResidents(
                 response.data
@@ -268,7 +268,7 @@ function ResidentsPage() {
         try {
 
             const response =
-                await getTowers();
+                await getTowers(getTenantId());
 
             setTowerOptions(
 
@@ -303,7 +303,7 @@ function ResidentsPage() {
         try {
 
             const response =
-                await getFlats();
+                await getFlats(getTenantId());
 
             setAllFlats(
                 response.data

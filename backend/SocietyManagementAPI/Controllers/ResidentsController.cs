@@ -19,7 +19,7 @@ namespace SocietyManagementAPI.Controllers
 
 
         [HttpGet]
-        public IActionResult GetResidents()
+        public IActionResult GetResidents(int tenantId)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace SocietyManagementAPI.Controllers
 
                     new SqlParameter(
                         "@TENANT_ID",
-                        1)
+                        tenantId)
                 );
 
             return Ok(result);

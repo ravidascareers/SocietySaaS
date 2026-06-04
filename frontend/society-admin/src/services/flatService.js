@@ -3,8 +3,8 @@ import { API_BASE_URL } from "../config/api";
 
 const API = `${API_BASE_URL}/flat`;
 
-export const getFlats = () =>
-    axios.get(API);
+export const getFlats = (tenantId) =>
+  axios.get(`${API}?tenantId=${tenantId}`)
 
 export const addFlat = (data) =>
     axios.post(API, data);
