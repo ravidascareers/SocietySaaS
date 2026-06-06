@@ -267,7 +267,7 @@ function TowerPage() {
 
     return (
 
-        <MainLayout>
+       
             <AppPage>
 
                 <AppHeader
@@ -361,7 +361,7 @@ function TowerPage() {
                 />
 
             </AppPage>
-        </MainLayout>
+      
     );
 
 }

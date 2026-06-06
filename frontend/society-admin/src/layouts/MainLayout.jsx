@@ -27,6 +27,11 @@ import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 
+import { useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+
+import { iconMap } from "../utils/menuIcons";
+
 import {
     getUserName,
     getTenantName,
@@ -36,12 +41,6 @@ import {
     from "../utils/session";
 
 
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import PeopleIcon from "@mui/icons-material/People";
-import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import PaymentsIcon from "@mui/icons-material/Payments";
-import ApartmentIcon from "@mui/icons-material/Apartment";
-
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -50,11 +49,14 @@ import { Navigate } from "react-router-dom";
 import AppButton from "../components/ui/AppButton";
 import { mapListToCamelCase } from "../utils/objectMapperUtil";
 
+import BusinessIcon from "@mui/icons-material/Business";
+
+
 
 function MainLayout({ children }) {
 
     const navigate = useNavigate();
-
+    const location = useLocation();
     if (!isLoggedIn()) {
 
         return (
@@ -71,20 +73,14 @@ function MainLayout({ children }) {
         navigate("/");
     }
 
-    useEffect(() => {
-
-        loadMenus();
-
-    }, []);
-
     const loadMenus = async () => {
 
         try {
 
             const data =
-            mapListToCamelCase(
-                await getMenus()
-            );
+                mapListToCamelCase(
+                    await getMenus()
+                );
 
             const tree =
                 buildMenuTree(data);
@@ -163,6 +159,47 @@ function MainLayout({ children }) {
         setAnchorEl(null);
     };
 
+    useEffect(() => {
+
+        loadMenus();
+
+    }, []);
+
+
+    useEffect(() => {
+
+        if (!menus.length)
+            return;
+
+        const expanded = {};
+
+        menus.forEach(parent => {
+
+            const selectedChild =
+                parent.children?.some(
+                    child =>
+                        child.menuPath ===
+                        location.pathname
+                );
+
+            if (selectedChild) {
+
+                expanded[
+                    parent.menuId
+                ] = true;
+
+            }
+
+        });
+
+        setOpenMenus(expanded);
+
+    },
+        [
+            menus,
+            location.pathname
+        ]);
+
     return (
 
         <Box
@@ -203,7 +240,14 @@ function MainLayout({ children }) {
                         }}
                     >
 
-                        <ApartmentIcon />
+                        <ListItemIcon
+                            sx={{
+                                minWidth: 32,
+                                color: "#2563eb"
+                            }}
+                        >
+                            <BusinessIcon />
+                        </ListItemIcon>
 
                         <Typography
                             variant="h6"
@@ -338,7 +382,13 @@ function MainLayout({ children }) {
 
                         boxSizing: "border-box",
 
-                        backgroundColor: "#0f172a",
+                        // backgroundColor: "#0f172a",
+
+                        // backgroundColor: "#7f1d1d",
+
+                        backgroundColor: "#111827",
+
+
 
                         color: "#fff",
 
@@ -348,7 +398,8 @@ function MainLayout({ children }) {
 
                         height: "calc(100vh - 48px)",
 
-                        overflow: "hidden",
+                        overflowY: "auto",
+                        overflowX: "hidden",
                     },
                 }}
             >
@@ -377,9 +428,16 @@ function MainLayout({ children }) {
                                 color: "#fff",
 
                                 backgroundColor:
-                                    "#1e293b",
+                                    "#1f2937",
 
-                                borderRadius: 2,
+
+                                borderRadius: 3,
+
+                                "& fieldset": {
+
+                                    borderColor:
+                                        "#374151"
+                                }
                             }
                         }}
                     />
@@ -388,7 +446,20 @@ function MainLayout({ children }) {
 
                 <List
                     sx={{
-                        pt: 0
+                        pt: 0,
+                        flex: 1,
+                        overflowY: "auto",
+                        overflowX: "hidden",
+
+                        "&::-webkit-scrollbar": {
+                            width: "3px"
+                        },
+
+                        "&::-webkit-scrollbar-thumb": {
+                            backgroundColor:
+                                "rgba(255,255,255,0.12)"
+                        }
+
                     }}
                 >
 
@@ -426,22 +497,57 @@ function MainLayout({ children }) {
 
                                 }}
 
+                                selected={
+                                    location.pathname ===
+                                    parent.menuPath
+                                }
+
                                 sx={{
+                                    pl: 4,
                                     mx: 1,
-                                    mb: 0.5,
+                                    mb: 0.75,
+                                    py: 0.5,
                                     borderRadius: 2,
+
+                                    backgroundColor:
+
+                                        location.pathname ===
+                                            parent.menuPath
+
+                                            ?
+
+                                            "#dc2626"
+
+                                            :
+
+                                            "transparent",
 
                                     "&:hover": {
                                         backgroundColor:
-                                            "rgba(255,255,255,0.08)"
+                                            "rgba(255,255,255,0.15)"
                                     }
                                 }}
                             >
+                                <ListItemIcon
+                                    sx={{
+                                        color: "#fff",
+                                        minWidth: 36
+                                    }}
+                                >
+                                    {
+                                        iconMap[
+                                        parent.menuIcon
+                                        ]
+                                    }
+                                </ListItemIcon>
 
                                 <ListItemText
-                                    primary={
-                                        parent.menuName
-                                    }
+                                    primary={parent.menuName}
+
+                                    primaryTypographyProps={{
+                                        fontSize: 15,
+                                        fontWeight: 600
+                                    }}
                                 />
 
                                 {
@@ -477,18 +583,38 @@ function MainLayout({ children }) {
                             <Collapse
 
                                 in={
-                                    openMenus[
-                                    parent.menuId
-                                    ]
+                                    searchText
+                                        ?
+                                        parent.children?.some(
+                                            child =>
+
+                                                child.menuName
+                                                    ?.toLowerCase()
+                                                    .includes(
+                                                        searchText
+                                                            .toLowerCase()
+                                                    )
+                                        )
+                                        :
+                                        openMenus[
+                                        parent.menuId
+                                        ]
                                 }
 
                                 timeout="auto"
 
-                                unmountOnExit
+
                             >
 
                                 <List
                                     disablePadding
+
+                                    sx={{
+                                        ml: 3.5,
+
+                                        borderLeft:
+                                            "1px solid rgba(255,255,255,0.12)"
+                                    }}
                                 >
 
                                     {
@@ -522,27 +648,79 @@ function MainLayout({ children }) {
                                                         )
                                                     }
 
+                                                    selected={
+                                                        location.pathname ===
+                                                        child.menuPath
+                                                    }
+
                                                     sx={{
-                                                        pl: 4,
-
+                                                        pl: 2.5,
+                                                        pr: 1,
                                                         mx: 1,
-
                                                         mb: 0.5,
-
                                                         borderRadius: 2,
+                                                        transition:
+                                                            "background-color 0.15s ease",
 
-                                                        "&:hover":
-                                                        {
+                                                        backgroundColor:
+
+                                                            location.pathname ===
+                                                                child.menuPath
+
+                                                                ?
+
+                                                                "#2563eb"
+
+                                                                :
+
+                                                                "transparent",
+
+                                                        "&:hover": {
+
                                                             backgroundColor:
-                                                                "rgba(255,255,255,0.08)"
+
+                                                                location.pathname ===
+                                                                    child.menuPath
+
+                                                                    ?
+
+                                                                    "#2563eb"
+
+                                                                    :
+
+                                                                    "rgba(255,255,255,0.08)"
                                                         }
                                                     }}
                                                 >
 
-                                                    <ListItemText
-                                                        primary={
-                                                            child.menuName
+                                                    <ListItemIcon
+                                                        sx={{
+                                                            color: "rgba(255,255,255,0.85)",
+                                                            minWidth: 30
+                                                        }}
+                                                    >
+                                                        {
+                                                            child.menuIcon
+
+                                                                ?
+
+                                                                iconMap[
+                                                                child.menuIcon
+                                                                ]
+
+                                                                :
+
+                                                                null
                                                         }
+                                                    </ListItemIcon>
+
+                                                    <ListItemText
+                                                        primary={child.menuName}
+
+                                                        primaryTypographyProps={{
+                                                            fontSize: 14,
+                                                            fontWeight: 400
+                                                        }}
                                                     />
 
                                                 </ListItemButton>
@@ -552,6 +730,8 @@ function MainLayout({ children }) {
 
                                 </List>
 
+
+
                             </Collapse>
 
                         </Box>
@@ -560,8 +740,11 @@ function MainLayout({ children }) {
 
                 </List>
 
+
+
             </Drawer>
 
+            {/* MAIN CONTENT AREA */}
             {/* MAIN CONTENT AREA */}
             <Box
                 sx={{
@@ -586,11 +769,41 @@ function MainLayout({ children }) {
                     }}
                 >
 
-                    {children}
+                    <Outlet />
 
                 </Box>
 
+                {/* FOOTER */}
+                <Box
+                    sx={{
+                        height: "24px",
+
+                        borderTop:
+                            "1px solid #e5e7eb",
+
+                        backgroundColor:
+                            "#ffffff",
+
+                        display: "flex",
+
+                        alignItems: "center",
+
+                        justifyContent: "center",
+
+                        color:
+                            "#6b7280",
+
+                        fontSize: "11px",
+
+                        userSelect: "none"
+                    }}
+                >
+                    Powered by Genie Box
+                </Box>
+
             </Box>
+
+
 
         </Box>
 

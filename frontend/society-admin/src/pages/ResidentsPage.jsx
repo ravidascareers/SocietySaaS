@@ -465,7 +465,7 @@ function ResidentsPage() {
 
 
     return (
-        <MainLayout>
+        
 
             <AppPage>
 
@@ -566,8 +566,6 @@ function ResidentsPage() {
 
 
             </AppPage>
-
-        </MainLayout>
     );
 }
 

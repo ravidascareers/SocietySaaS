@@ -315,7 +315,7 @@ function FlatPage() {
 
     return (
 
-        <MainLayout>
+      
             <AppPage>
 
                 <AppHeader
@@ -423,7 +423,6 @@ function FlatPage() {
 
             </AppPage>
 
-        </MainLayout>
 
     );
 
