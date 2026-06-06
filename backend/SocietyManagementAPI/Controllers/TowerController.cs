@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using SocietyManagementAPI.Helpers;
 using SocietyManagementAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using System.Data;
 
 namespace SocietyManagementAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+     [Authorize]
     public class TowerController : ControllerBase
     {
         private readonly DbHelper _db;
@@ -18,10 +20,12 @@ namespace SocietyManagementAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTowers(int tenantId)
+        public IActionResult GetTowers()
         {
             try
             {
+                int tenantId = Convert.ToInt32(User.FindFirst("TenantId")?.Value);
+
             var result =
                 _db.ExecuteList(
 
@@ -55,6 +59,8 @@ namespace SocietyManagementAPI.Controllers
         {
             try
             {
+                int tenantId = Convert.ToInt32(User.FindFirst("TenantId")?.Value);
+
             _db.ExecuteNonQuery(
 
                 "USP_TOWER",
@@ -65,7 +71,7 @@ namespace SocietyManagementAPI.Controllers
 
                 new SqlParameter(
                     "@TENANT_ID",
-                    model.TenantId),
+                    tenantId),
 
                 new SqlParameter(
                     "@TOWER_NAME",
@@ -108,6 +114,8 @@ namespace SocietyManagementAPI.Controllers
         {
             try
             {
+                 int tenantId = Convert.ToInt32(User.FindFirst("TenantId")?.Value);
+
             _db.ExecuteNonQuery(
 
                 "USP_TOWER",
@@ -122,7 +130,7 @@ namespace SocietyManagementAPI.Controllers
 
                 new SqlParameter(
                     "@TENANT_ID",
-                    model.TenantId),
+                   tenantId),
 
                 new SqlParameter(
                     "@TOWER_NAME",
@@ -164,6 +172,8 @@ namespace SocietyManagementAPI.Controllers
         {
             try
             {
+                int tenantId = Convert.ToInt32(User.FindFirst("TenantId")?.Value);
+
             _db.ExecuteNonQuery(
 
                 "USP_TOWER",
@@ -178,7 +188,7 @@ namespace SocietyManagementAPI.Controllers
 
                 new SqlParameter(
                     "@TENANT_ID",
-                    1)
+                    tenantId)
             );
 
             return Ok(new

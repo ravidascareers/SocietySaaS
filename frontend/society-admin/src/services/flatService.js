@@ -1,19 +1,16 @@
-import axios from "axios";
-import { API_BASE_URL } from "../config/api";
+import api from "./api"
 
-const API = `${API_BASE_URL}/flat`;
-
-export const getFlats = (tenantId) =>
-  axios.get(`${API}?tenantId=${tenantId}`)
+export const getFlats =()=>
+    api.get("/flat");
 
 export const addFlat = (data) =>
-    axios.post(API, data);
+    api.post("/flat", data);
 
 export const updateFlat = (id, data) =>
-    axios.put(`${API}/${id}`,data);
+    api.put(`/flat/${id}`,data);
 
 export const deleteFlat = (id) =>
-    axios.delete(`${API}/${id}`);
+    api.delete(`/flat/${id}`);
 
 
 

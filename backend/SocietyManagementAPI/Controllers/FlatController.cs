@@ -3,11 +3,13 @@ using Microsoft.Data.SqlClient;
 using SocietyManagementAPI.Helpers;
 using SocietyManagementAPI.Models;
 using System.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SocietyManagementAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class FlatController : ControllerBase
     {
         private readonly DbHelper _db;
@@ -18,10 +20,13 @@ namespace SocietyManagementAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetFlats(int tenantId)
+        public IActionResult GetFlats()
         {
             try
             {
+                int tenantId = Convert.ToInt32(User.FindFirst("TenantId")?.Value);
+
+
             var result =
                 _db.ExecuteList(
 
@@ -55,6 +60,8 @@ namespace SocietyManagementAPI.Controllers
         {
             try
             {
+                int tenantId = Convert.ToInt32(User.FindFirst("TenantId")?.Value);
+
             _db.ExecuteNonQuery(
 
                 "USP_FLAT",
@@ -65,7 +72,7 @@ namespace SocietyManagementAPI.Controllers
 
                 new SqlParameter(
                     "@TENANT_ID",
-                    model.TenantId),
+                     tenantId),
 
                     new SqlParameter(
                     "@TOWER_ID",
@@ -120,6 +127,8 @@ namespace SocietyManagementAPI.Controllers
         {
             try
             {
+                int tenantId = Convert.ToInt32(User.FindFirst("TenantId")?.Value);
+
             _db.ExecuteNonQuery(
 
                 "USP_FLAT",
@@ -130,7 +139,7 @@ namespace SocietyManagementAPI.Controllers
 
                 new SqlParameter(
                     "@TENANT_ID",
-                    model.TenantId),
+                    tenantId),
 
                 new SqlParameter(
                     "@TOWER_ID",

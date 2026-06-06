@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using SocietyManagementAPI.Helpers;
 using SocietyManagementAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using System.Data;
 
 namespace SocietyManagementAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ResidentsController : ControllerBase
     {
         private readonly DbHelper _db;
@@ -19,10 +21,12 @@ namespace SocietyManagementAPI.Controllers
 
 
         [HttpGet]
-        public IActionResult GetResidents(int tenantId)
+        public IActionResult GetResidents()
         {
             try
             {
+                int tenantId = Convert.ToInt32(User.FindFirst("TenantId")?.Value);
+
             var result =
                 _db.ExecuteList(
 
@@ -87,6 +91,8 @@ namespace SocietyManagementAPI.Controllers
         [HttpPost]
         public IActionResult AddResident(ResidentModel model)
         {
+            int tenantId = Convert.ToInt32(User.FindFirst("TenantId")?.Value);
+
             _db.ExecuteNonQuery(
 
                 "USP_RESIDENT",
@@ -97,7 +103,7 @@ namespace SocietyManagementAPI.Controllers
 
                 new SqlParameter(
                     "@TENANT_ID",
-                    model.TenantId),
+                    tenantId),
 
                     new SqlParameter(
                     "@FLAT_ID",
@@ -268,6 +274,8 @@ namespace SocietyManagementAPI.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateResident(int id, ResidentModel model)
         {
+            int tenantId = Convert.ToInt32(User.FindFirst("TenantId")?.Value);
+
             _db.ExecuteNonQuery(
 
                 "USP_RESIDENT",
@@ -282,7 +290,7 @@ namespace SocietyManagementAPI.Controllers
 
                 new SqlParameter(
                     "@TENANT_ID",
-                    model.TenantId),
+                    tenantId),
 
                     new SqlParameter(
                     "@FLAT_ID",
@@ -452,6 +460,7 @@ namespace SocietyManagementAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteResident(int id)
         {
+
             _db.ExecuteNonQuery(
 
                 "USP_RESIDENT",

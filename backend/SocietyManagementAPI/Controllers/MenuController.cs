@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using SocietyManagementAPI.Helpers;
@@ -17,6 +18,7 @@ namespace SocietyManagementAPI.Controllers
             _db = db;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult GetMenu()
         {

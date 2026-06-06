@@ -50,4 +50,16 @@ export const clearSession = () => {
     localStorage.removeItem(
         "user"
     );
+
+    localStorage.removeItem(
+        "token"
+    );
+
+};
+
+export const getToken = () => {
+
+    return localStorage.getItem(
+        "token"
+    );
 };

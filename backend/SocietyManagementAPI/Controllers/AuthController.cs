@@ -11,43 +11,13 @@ namespace SocietyManagementAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly DbHelper _db;
+        private readonly JwtHelper _jwtHelper;
 
-        public AuthController(DbHelper db)
+        public AuthController(DbHelper db, JwtHelper jwtHelper)
         {
             _db = db;
+            _jwtHelper = jwtHelper;
         }
-
-/*
-    [HttpPost("login")]
-    public IActionResult Login(LoginModel model)
-    {
-        DataTable dt = _db.ExecuteDataTable("USP_LOGIN",
-            new SqlParameter("@ACTION", "LOGIN"),
-            new SqlParameter("@LOGIN_ID",model.LoginId),
-            new SqlParameter("@PASSWORD_HASH",model.Password));
-
-        if (dt.Rows.Count == 0)
-        {
-            return Unauthorized(
-                new
-                {
-                    message = "Invalid Login"
-                });
-        }
-
-        DataRow row = dt.Rows[0];
-
-        return Ok(
-            new
-            {
-                userId =Convert.ToInt32(row["USER_ID"]),
-                tenantId =Convert.ToInt32(row["TENANT_ID"]),
-                userName =row["USER_NAME"]?.ToString(),
-                loginId =row["LOGIN_ID"]?.ToString(),
-                tenantName =row["TENANT_NAME"]?.ToString()
-            });
-        }*/
-
 
         [HttpPost("login")]
         public IActionResult Login(LoginModel model)
@@ -71,9 +41,27 @@ namespace SocietyManagementAPI.Controllers
 
                 DataRow row = dt.Rows[0];
 
+                string token =
+                        _jwtHelper.GenerateToken(
+
+                            Convert.ToInt32(
+                                row["USER_ID"]),
+
+                            Convert.ToInt32(
+                                row["TENANT_ID"]),
+
+                            row["USER_NAME"]
+                                ?.ToString() ?? "",
+
+                            row["LOGIN_ID"]
+                                ?.ToString() ?? ""
+
+                        );
+
                 return Ok(
                     new
                     {
+                        token = token,
                         userId = Convert.ToInt32(row["USER_ID"]),
                         tenantId = Convert.ToInt32(row["TENANT_ID"]),
                         userName = row["USER_NAME"]?.ToString(),
@@ -94,4 +82,4 @@ namespace SocietyManagementAPI.Controllers
         }
     }
 
-}   
+}

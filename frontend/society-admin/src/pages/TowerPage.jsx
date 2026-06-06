@@ -67,7 +67,7 @@ function TowerPage() {
         try {
 
             const response =
-                await getTowers(getTenantId());
+                await getTowers();
 
             setTowers(
 
@@ -261,7 +261,7 @@ function TowerPage() {
 
     useEffect(() => {
 
-        loadTowers(getTenantId());
+        loadTowers();
 
     }, []);
 

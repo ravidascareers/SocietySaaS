@@ -66,25 +66,14 @@ function FlatPage() {
         try {
 
             const response =
-                await getFlats(getTenantId());
+                await getFlats();
 
-            console.log(
-                "FLAT API",
-                response.data[0]
-            );
 
             setFlats(
 
                 mapListToCamelCase(
                     response.data
                 )
-            );
-
-             console.log(
-                "FLAT API",
-                mapListToCamelCase(
-                    response.data
-                )[0]
             );
 
         }
