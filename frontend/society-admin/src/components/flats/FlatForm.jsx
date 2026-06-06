@@ -114,8 +114,8 @@ function FlatForm({
                     fullWidth
                     type="number"
                     label="Area Sq Ft"
-                    name="areaSqFt"
-                    value={formData.areaSqFt || ""}
+                    name="areaSqft"
+                    value={formData.areaSqft || ""}
                     onChange={handleChange}
                 />
 

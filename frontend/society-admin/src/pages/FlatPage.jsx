@@ -45,7 +45,7 @@ function FlatPage() {
         flatId: 0,
         flatNo: "",
         floorNo: "",
-        areaSqFt: "",
+        areaSqft: "",
         maintenanceRate: "",
         status: "Vacant",
     });
@@ -68,11 +68,23 @@ function FlatPage() {
             const response =
                 await getFlats(getTenantId());
 
+            console.log(
+                "FLAT API",
+                response.data[0]
+            );
+
             setFlats(
 
                 mapListToCamelCase(
                     response.data
                 )
+            );
+
+             console.log(
+                "FLAT API",
+                mapListToCamelCase(
+                    response.data
+                )[0]
             );
 
         }
@@ -150,7 +162,7 @@ function FlatPage() {
                         flatId: formData.flatId,
                         flatNo: formData.flatNo,
                         floorNo: formData.floorNo,
-                        areaSqFt: formData.areaSqFt,
+                        areaSqft: formData.areaSqft,
                         maintenanceRate: formData.maintenanceRate,
                         status: formData.status,
                         modifiedBy: getUserId()
@@ -166,7 +178,7 @@ function FlatPage() {
                     towerId: formData.towerId,
                     flatNo: formData.flatNo,
                     floorNo: formData.floorNo,
-                    areaSqFt: formData.areaSqFt,
+                    areaSqft: formData.areaSqft,
                     maintenanceRate: formData.maintenanceRate,
                     status: formData.status,
                     createdBy: getUserId(),
@@ -201,7 +213,7 @@ function FlatPage() {
             flatNo: row.FLAT_NO ?? row.flatNo,
             floorNo: row.FLOOR_NO ?? row.floorNo,
 
-            areaSqFt: row.AREA_SQFT ?? row.areaSqFt,
+            areaSqft: row.AREA_SQFT ?? row.areaSqft,
             maintenanceRate: row.MAINTENANCE_RATE ?? row.maintenanceRate,
 
             status: row.STATUS ?? row.status,
@@ -254,7 +266,7 @@ function FlatPage() {
         },
 
         {
-            field: "areaSqFt",
+            field: "areaSqft",
             headerName: "Area",
             flex: 1,
         },
@@ -315,113 +327,113 @@ function FlatPage() {
 
     return (
 
-      
-            <AppPage>
 
-                <AppHeader
-                    title="Flat Master"
-                    action={
-                        <AppButton
-                            onClick={() => {
-                                setEditMode(false);
-                                setFormData({
-                                    towerId: 0,
-                                    flatId: 0,
-                                    flatNo: "",
-                                    floorNo: "",
-                                    areaSqFt: "",
-                                    maintenanceRate: "",
-                                    status: "Vacant"
-                                });
-                                setOpen(true);
-                            }}
-                        >
-                            Add Flat
-                        </AppButton>
-                    }
+        <AppPage>
 
+            <AppHeader
+                title="Flat Master"
+                action={
+                    <AppButton
+                        onClick={() => {
+                            setEditMode(false);
+                            setFormData({
+                                towerId: 0,
+                                flatId: 0,
+                                flatNo: "",
+                                floorNo: "",
+                                areaSqft: "",
+                                maintenanceRate: "",
+                                status: "Vacant"
+                            });
+                            setOpen(true);
+                        }}
+                    >
+                        Add Flat
+                    </AppButton>
+                }
+
+            />
+            <Box
+                sx={{
+                    display: "grid",
+                    gridTemplateColumns:
+                        "repeat(3, 1fr)",
+                    gap: 2,
+                    mb: 0.5,
+                }}
+            >
+                <SummaryCard
+                    title="Total Flats"
+                    value={flats.length}
                 />
-                <Box
-                    sx={{
-                        display: "grid",
-                        gridTemplateColumns:
-                            "repeat(3, 1fr)",
-                        gap: 2,
-                        mb: 0.5,
-                    }}
-                >
-                    <SummaryCard
-                        title="Total Flats"
-                        value={flats.length}
-                    />
 
-                    <SummaryCard
-                        title="Occupied Flats"
-                        value={
-                            flats.filter(
-                                x => x.status === "Occupied"
-                            ).length
-                        }
-                    />
-
-                    <SummaryCard
-                        title="Vacant Flats"
-                        value={
-                            flats.filter(
-                                x => x.status === "Vacant"
-                            ).length
-                        }
-                    />
-                </Box>
-
-                <AppCard
-                    sx={{
-                        flex: 1,
-                        minHeight: 0,
-                    }}
-                >
-
-                    <AppDataGrid
-
-                        rows={flats}
-
-                        columns={columns}
-
-                        getRowId={(row) =>
-                            row.flatId
-                        }
-
-                    />
-
-                </AppCard>
-
-                <FlatForm
-
-                    open={open}
-
-                    onClose={() =>
-                        setOpen(false)
+                <SummaryCard
+                    title="Occupied Flats"
+                    value={
+                        flats.filter(
+                            x => x.status === "Occupied"
+                        ).length
                     }
+                />
 
-                    editMode={editMode}
-
-                    formData={formData}
-
-                    towerOptions={
-                        towerOptions
+                <SummaryCard
+                    title="Vacant Flats"
+                    value={
+                        flats.filter(
+                            x => x.status === "Vacant"
+                        ).length
                     }
+                />
+            </Box>
 
-                    handleChange={
-                        handleChange
-                    }
+            <AppCard
+                sx={{
+                    flex: 1,
+                    minHeight: 0,
+                }}
+            >
 
-                    handleSave={
-                        handleSave
+                <AppDataGrid
+
+                    rows={flats}
+
+                    columns={columns}
+
+                    getRowId={(row) =>
+                        row.flatId
                     }
 
                 />
 
-            </AppPage>
+            </AppCard>
+
+            <FlatForm
+
+                open={open}
+
+                onClose={() =>
+                    setOpen(false)
+                }
+
+                editMode={editMode}
+
+                formData={formData}
+
+                towerOptions={
+                    towerOptions
+                }
+
+                handleChange={
+                    handleChange
+                }
+
+                handleSave={
+                    handleSave
+                }
+
+            />
+
+        </AppPage>
 
 
     );
