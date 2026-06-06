@@ -82,20 +82,9 @@ function MainLayout({ children }) {
                     await getMenus()
                 );
 
-            console.log(
-                "MENU API",
-                data
-            );
-
 
             const tree =
                 buildMenuTree(data);
-
-
-            console.log(
-                "MENU TREE",
-                tree
-            );
 
             setMenus(tree);
 
