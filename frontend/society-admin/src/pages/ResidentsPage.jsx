@@ -45,10 +45,6 @@ function ResidentsPage() {
 
         residentId: 0,
 
-        towerId: "",
-
-        flatId: "",
-
         residentName: "",
 
         residentType: "Owner",
@@ -118,40 +114,6 @@ function ResidentsPage() {
 
         });
 
-        if (
-            name === "towerId"
-        ) {
-
-            const filteredFlats =
-
-                allFlats.filter(
-                    x =>
-
-                        (x.TOWER_ID ??
-                            x.towerId)
-
-                        === Number(value)
-                );
-
-            setFlatOptions(
-
-                filteredFlats.map(
-                    x => ({
-
-                        value:
-                            x.FLAT_ID ??
-                            x.flatId,
-
-                        label:
-                            x.FLAT_NO ??
-                            x.flatNo
-
-                    })
-                )
-            );
-
-        }
-
     };
 
     const handleSave = async () => {
@@ -217,28 +179,10 @@ function ResidentsPage() {
 
     };
 
-    const [towerOptions,
-        setTowerOptions]
-        =
-        useState([]);
-
-    const [flatOptions,
-        setFlatOptions]
-        =
-        useState([]);
-
-    const [allFlats,
-        setAllFlats]
-        =
-        useState([]);
 
     useEffect(() => {
 
         loadResidents();
-
-        loadTowers();
-
-        loadFlats();
 
     }, []);
 
@@ -246,66 +190,9 @@ function ResidentsPage() {
         try {
 
             const response =
-                await getResidents(getTenantId());
+                await getResidents();
 
             setResidents(
-                response.data
-            );
-
-        }
-        catch (error) {
-
-            console.error(
-                error
-            );
-
-        }
-
-    };
-
-    const loadTowers = async () => {
-
-        try {
-
-            const response =
-                await getTowers(getTenantId());
-
-            setTowerOptions(
-
-                response.data.map(
-                    x => ({
-
-                        value:
-                            x.TOWER_ID ??
-                            x.towerId,
-
-                        label:
-                            x.TOWER_NAME ??
-                            x.towerName
-
-                    })
-                )
-            );
-
-        }
-        catch (error) {
-
-            console.error(
-                error
-            );
-
-        }
-
-    };
-
-    const loadFlats = async () => {
-
-        try {
-
-            const response =
-                await getFlats(getTenantId());
-
-            setAllFlats(
                 response.data
             );
 
@@ -339,18 +226,6 @@ function ResidentsPage() {
             field: "residentType",
             headerName: "Type",
             flex: 1.5,
-        },
-
-        {
-            field: "towerName",
-            headerName: "Tower",
-            flex: 1,
-        },
-
-        {
-            field: "flatNo",
-            headerName: "Flat No",
-            flex: 1,
         },
 
         {
@@ -393,39 +268,6 @@ function ResidentsPage() {
                                     );
 
                                 const resident = response.data[0];
-
-                                const filteredFlats =
-
-                                    allFlats.filter(
-                                        x =>
-
-                                            (x.towerId ??
-                                                x.TOWER_ID)
-
-                                            === Number(
-                                                resident.towerId
-                                            )
-                                    );
-
-                                setFlatOptions(
-
-                                    filteredFlats.map(
-                                        x => ({
-
-                                            value:
-                                                x.flatId ??
-                                                x.FLAT_ID,
-
-                                            label:
-                                                x.flatNo ??
-                                                x.FLAT_NO
-
-                                        })
-                                    )
-
-                                );
-
-
 
                                 setFormData(resident);
 
@@ -559,9 +401,7 @@ function ResidentsPage() {
 
                     handleSave={handleSave}
 
-                    towerOptions={towerOptions}
-
-                    flatOptions={flatOptions}
+                    
                 />
 
 

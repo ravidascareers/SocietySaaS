@@ -26,10 +26,6 @@ function ResidentForm({
 
     formData,
 
-    towerOptions,
-
-    flatOptions,
-
     handleChange,
 
     handleSave,
@@ -128,6 +124,9 @@ function ResidentForm({
                     }}
                 >
 
+
+{/** Tower & Flat Field is abandoned from Resident Master
+ * It moved to Occupancy Module.
                     <AppSelect
                         label="Tower"
                         name="towerId"
@@ -155,6 +154,7 @@ function ResidentForm({
                             handleChange
                         }
                     />
+ */}
 
                     <TextField
                         label="Resident Name"

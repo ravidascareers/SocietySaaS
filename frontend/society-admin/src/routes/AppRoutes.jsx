@@ -7,6 +7,7 @@ import BillingPage from "../pages/BillingPage";
 import TowerPage from "../pages/TowerPage";
 import FlatPage from "../pages/FlatPage";
 import MainLayout from "../layouts/MainLayout";
+import OccupanyPage from "../pages/OccupancyPage";
 
 function AppRoutes() {
     return (
@@ -43,9 +44,16 @@ function AppRoutes() {
                     />
 
                     <Route
+                        path="/occupancy"
+                        element={<OccupanyPage />}
+                    />
+
+                    <Route
                         path="/billing"
                         element={<BillingPage />}
                     />
+
+                     
 
                 </Route>
 
