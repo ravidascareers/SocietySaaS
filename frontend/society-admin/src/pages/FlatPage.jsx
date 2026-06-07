@@ -7,7 +7,12 @@ import {
     addFlat,
     updateFlat,
     deleteFlat,
+
 } from "../services/flatService";
+
+import {
+    getFlatTypes
+} from "../services/flatTypeService";
 
 import {
     getTenantId,
@@ -48,50 +53,19 @@ function FlatPage() {
         areaSqft: "",
         maintenanceRate: "",
         status: "Vacant",
+        flatTypeId: 0
     });
 
     const [flats, setFlats] = useState([]);
     const [towerOptions, setTowerOptions] = useState([]);
-
-    useEffect(() => {
-
-        loadTowers();
-
-        loadFlats();
-
-    }, []);
-
-    const loadFlats = async () => {
-
-        try {
-
-            const response =
-                await getFlats();
-
-
-            setFlats(
-
-                mapListToCamelCase(
-                    response.data
-                )
-            );
-
-        }
-        catch (error) {
-
-            console.error(
-                error
-            );
-
-        }
-    };
+    const [flatTypeOptions, setflatTypeOptions] = useState([]);
 
     const loadTowers = async () => {
 
         try {
 
             const response =
-                await getTowers(getTenantId());
+                await getTowers();
 
             setTowerOptions(
 
@@ -119,6 +93,73 @@ function FlatPage() {
 
         }
     };
+
+    const loadFlats = async () => {
+
+        try {
+
+            const response =
+                await getFlats();
+
+
+            setFlats(
+
+                mapListToCamelCase(
+                    response.data
+                )
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                error
+            );
+
+        }
+    };
+
+    const loadFlatTypes = async () => {
+
+        try {
+
+            const response =
+                await getFlatTypes();
+
+
+            setflatTypeOptions(
+
+                mapListToCamelCase(
+                    response.data).map(item => ({
+                        value: item.flatTypeId,
+                        label: item.flatTypeName,
+                    })
+
+                    )
+            );
+
+
+        }
+        catch (error) {
+
+            console.error(
+                error
+            );
+
+        }
+    };
+
+    useEffect(() => {
+
+        loadTowers();
+
+        loadFlats();
+
+        loadFlatTypes();
+
+    }, []);
+
+
 
     const handleChange = (e) => {
 
@@ -154,7 +195,8 @@ function FlatPage() {
                         areaSqft: formData.areaSqft,
                         maintenanceRate: formData.maintenanceRate,
                         status: formData.status,
-                        modifiedBy: getUserId()
+                        modifiedBy: getUserId(),
+                        flatTypeId: formData.flatTypeId
                     }
                 );
 
@@ -171,6 +213,7 @@ function FlatPage() {
                     maintenanceRate: formData.maintenanceRate,
                     status: formData.status,
                     createdBy: getUserId(),
+                    flatTypeId: formData.flatTypeId
                 });
 
             }
@@ -207,6 +250,8 @@ function FlatPage() {
 
             status: row.STATUS ?? row.status,
 
+            flatTypeId: row.FLAT_TYPE_ID ?? row.flatTypeId
+
         });
 
         setOpen(true);
@@ -233,12 +278,17 @@ function FlatPage() {
     };
 
 
-
     const columns = [
 
         {
             field: "towerName",
             headerName: "Tower",
+            flex: 1,
+        },
+
+        {
+            field: "floorNo",
+            headerName: "Floor",
             flex: 1,
         },
 
@@ -249,9 +299,9 @@ function FlatPage() {
         },
 
         {
-            field: "floorNo",
-            headerName: "Floor",
-            flex: 1,
+            field: "flatTypeName",
+            headerName: "Flat Type",
+            flex: 1
         },
 
         {
@@ -332,7 +382,8 @@ function FlatPage() {
                                 floorNo: "",
                                 areaSqft: "",
                                 maintenanceRate: "",
-                                status: "Vacant"
+                                status: "Vacant",
+                                flatTypeId: 0
                             });
                             setOpen(true);
                         }}
@@ -410,6 +461,10 @@ function FlatPage() {
 
                 towerOptions={
                     towerOptions
+                }
+
+                flatTypeOptions={
+                    flatTypeOptions
                 }
 
                 handleChange={

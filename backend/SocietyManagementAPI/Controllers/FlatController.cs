@@ -27,23 +27,23 @@ namespace SocietyManagementAPI.Controllers
                 int tenantId = Convert.ToInt32(User.FindFirst("TenantId")?.Value);
 
 
-            var result =
-                _db.ExecuteList(
+                var result =
+                    _db.ExecuteList(
 
-                    "USP_FLAT",
+                        "USP_FLAT",
 
-                    new SqlParameter(
-                        "@ACTION",
-                        "GET"),
+                        new SqlParameter(
+                            "@ACTION",
+                            "GET"),
 
-                    new SqlParameter(
-                        "@TENANT_ID",
-                        tenantId)
-                );
+                        new SqlParameter(
+                            "@TENANT_ID",
+                            tenantId)
+                    );
 
-            return Ok(result);
+                return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(
                     500,
@@ -62,55 +62,60 @@ namespace SocietyManagementAPI.Controllers
             {
                 int tenantId = Convert.ToInt32(User.FindFirst("TenantId")?.Value);
 
-            _db.ExecuteNonQuery(
+                _db.ExecuteNonQuery(
 
-                "USP_FLAT",
-
-                new SqlParameter(
-                    "@ACTION",
-                    "INSERT"),
-
-                new SqlParameter(
-                    "@TENANT_ID",
-                     tenantId),
+                    "USP_FLAT",
 
                     new SqlParameter(
-                    "@TOWER_ID",
-                    model.TowerId),
+                        "@ACTION",
+                        "INSERT"),
 
-                new SqlParameter(
-                    "@FLAT_NO",
-                    model.FlatNo),
+                    new SqlParameter(
+                        "@TENANT_ID",
+                         tenantId),
 
-                new SqlParameter(
-                    "@FLOOR_NO",
-                    model.FloorNo),
+                        new SqlParameter(
+                        "@TOWER_ID",
+                        model.TowerId),
 
-                new SqlParameter(
-                    "@AREA_SQFT",
-                    model.AreaSqFt),
+                    new SqlParameter(
+                        "@FLAT_NO",
+                        model.FlatNo),
 
-                new SqlParameter(
-                    "@MAINTENANCE_RATE",
-                    model.MaintenanceRate),
+                    new SqlParameter(
+                        "@FLOOR_NO",
+                        model.FloorNo),
 
-                new SqlParameter(
-                    "@STATUS",
-                    model.Status),
+                    new SqlParameter(
+                        "@AREA_SQFT",
+                        model.AreaSqFt),
 
-                new SqlParameter(
-                    "@CREATED_BY",
-                    model.CreatedBy)
-            );
+                    new SqlParameter(
+                        "@MAINTENANCE_RATE",
+                        model.MaintenanceRate),
 
-            return Ok(
-                new
-                {
-                    message =
-                        "Flat Created"
-                });
-        }
-        catch(Exception ex)
+                    new SqlParameter(
+                        "@STATUS",
+                        model.Status),
+
+                    new SqlParameter(
+                        "@CREATED_BY",
+                        model.CreatedBy),
+
+                    new SqlParameter(
+                            "@FLAT_TYPE_ID",
+                            model.FlatTypeId
+                        )
+                );
+
+                return Ok(
+                    new
+                    {
+                        message =
+                            "Flat Created"
+                    });
+            }
+            catch (Exception ex)
             {
                 return StatusCode(
                     500,
@@ -129,50 +134,55 @@ namespace SocietyManagementAPI.Controllers
             {
                 int tenantId = Convert.ToInt32(User.FindFirst("TenantId")?.Value);
 
-            _db.ExecuteNonQuery(
+                _db.ExecuteNonQuery(
 
-                "USP_FLAT",
+                    "USP_FLAT",
 
-                new SqlParameter(
-                    "@ACTION",
-                    "UPDATE"),
+                    new SqlParameter(
+                        "@ACTION",
+                        "UPDATE"),
 
-                new SqlParameter(
-                    "@TENANT_ID",
-                    tenantId),
+                    new SqlParameter(
+                        "@TENANT_ID",
+                        tenantId),
 
-                new SqlParameter(
-                    "@TOWER_ID",
-                    model.TowerId),
+                    new SqlParameter(
+                        "@TOWER_ID",
+                        model.TowerId),
 
-                new SqlParameter(
-                    "@FLAT_ID",
-                    id),
+                    new SqlParameter(
+                        "@FLAT_ID",
+                        id),
 
-                new SqlParameter(
-                    "@FLAT_NO",
-                    model.FlatNo),
+                    new SqlParameter(
+                        "@FLAT_NO",
+                        model.FlatNo),
 
-                new SqlParameter(
-                    "@FLOOR_NO",
-                    model.FloorNo),
+                    new SqlParameter(
+                        "@FLOOR_NO",
+                        model.FloorNo),
 
-                new SqlParameter(
-                    "@AREA_SQFT",
-                    model.AreaSqFt),
+                    new SqlParameter(
+                        "@AREA_SQFT",
+                        model.AreaSqFt),
 
-                new SqlParameter(
-                    "@MAINTENANCE_RATE",
-                    model.MaintenanceRate),
+                    new SqlParameter(
+                        "@MAINTENANCE_RATE",
+                        model.MaintenanceRate),
 
-                new SqlParameter(
-                    "@STATUS",
-                    model.Status),
+                    new SqlParameter(
+                        "@STATUS",
+                        model.Status),
 
-                new SqlParameter(
-                    "@MODIFIED_BY",
-                    model.ModifiedBy)
-            );
+                    new SqlParameter(
+                        "@MODIFIED_BY",
+                        model.ModifiedBy),
+
+                    new SqlParameter(
+                            "@FLAT_TYPE_ID",
+                            model.FlatTypeId
+                        )
+                );
 
                 return Ok(new
                 {
@@ -180,7 +190,7 @@ namespace SocietyManagementAPI.Controllers
                     Message = "Flat Updated"
                 });
             }
-        catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(
                     500,

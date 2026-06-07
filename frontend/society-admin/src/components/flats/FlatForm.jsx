@@ -19,6 +19,8 @@ function FlatForm({
 
     towerOptions,
 
+    flatTypeOptions,
+
     handleChange,
 
     handleSave,
@@ -108,6 +110,26 @@ function FlatForm({
                     name="floorNo"
                     value={formData.floorNo || ""}
                     onChange={handleChange}
+                />
+
+                <AppSelect
+
+                    label="Flat Type"
+
+                    name="flatTypeId"
+
+                    value={
+                        formData.flatTypeId||""
+                    }
+
+                    options={
+                        flatTypeOptions
+                    }
+
+                    onChange={
+                        handleChange
+                    }
+
                 />
 
                 <TextField
