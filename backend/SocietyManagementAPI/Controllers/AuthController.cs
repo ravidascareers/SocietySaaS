@@ -27,8 +27,8 @@ namespace SocietyManagementAPI.Controllers
                 DataTable dt = _db.ExecuteDataTable(
                     "USP_LOGIN",
                     new SqlParameter("@ACTION", "LOGIN"),
-                    new SqlParameter("@LOGIN_ID", model.LoginId),
-                    new SqlParameter("@PASSWORD_HASH", model.Password));
+                    new SqlParameter("@LOGIN_ID", model.LoginId)
+                    );
 
                 if (dt.Rows.Count == 0)
                 {
@@ -40,6 +40,18 @@ namespace SocietyManagementAPI.Controllers
                 }
 
                 DataRow row = dt.Rows[0];
+
+                bool validPassword = PasswordHelper.VerifyPassword(model.Password,row["PASSWORD_HASH"]?.ToString());
+
+                if (!validPassword)
+                {
+                    return Unauthorized(
+                        new
+                        {
+                            message =
+                                "Invalid Login"
+                        });
+                }
 
                 string token =
                         _jwtHelper.GenerateToken(
@@ -57,6 +69,8 @@ namespace SocietyManagementAPI.Controllers
                                 ?.ToString() ?? ""
 
                         );
+
+                
 
                 return Ok(
                     new
@@ -80,6 +94,14 @@ namespace SocietyManagementAPI.Controllers
                     });
             }
         }
+    
+    [HttpGet("crypt")]
+    public IActionResult Crypt()
+        {
+            var crypt = PasswordHelper.HashPassword("admin123");
+            return Ok(crypt);
+        }
+    
     }
 
 }
