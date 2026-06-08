@@ -10,11 +10,18 @@ import AppPage from "../components/ui/AppPage";
 import AppHeader from "../components/ui/AppHeader";
 import AppCard from "../components/ui/AppCard";
 
+import TowerNavigator from "../components/occupancy/TowerNavigator";
+import FloorSelector from "../components/occupancy/FloorSelector";
+import FlatCard from "../components/occupancy/FlatCard";
+import ResidentDetailPanel from "../components/occupancy/ResidentDetailPanel";
+
 import { getTowers } from "../services/towerService";
 import { getOccupancies } from "../services/occupancyService";
 import { getFlats } from "../services/flatService";
 
 import { mapListToCamelCase } from "../utils/objectMapperUtil";
+
+
 
 function OccupancyBoard() {
 
@@ -206,6 +213,39 @@ function OccupancyBoard() {
                 selectedFlat?.flatId
         );
 
+    const getTowerStats = (towerId) => {
+
+        const towerFlats =
+
+            flats.filter(
+                x =>
+                    x.towerId ===
+                    towerId
+            );
+
+        const occupied =
+
+            occupancies.filter(
+                x =>
+                    x.towerId ===
+                    towerId
+            ).length;
+
+        return {
+
+            total:
+                towerFlats.length,
+
+            occupied,
+
+            vacant:
+                towerFlats.length -
+                occupied
+        };
+    };
+
+    console.log("FLATS", flats);
+
     return (
 
         <AppPage>
@@ -236,87 +276,22 @@ function OccupancyBoard() {
 
                 {/* LEFT SIDE - TOWERS NAVIGATOR*/}
 
-                <AppCard>
+                <TowerNavigator
 
-                    <Typography
-                        variant="h6"
-                        fontWeight={700}
-                        sx={{ mb: 2 }}
-                    >
-                        Towers
-                    </Typography>
+                    towers={towers}
 
-                    <Box
-                        sx={{
-                            overflowY: "auto"
-                        }}
-                    >
+                    flats={flats}
 
-                        {
-                            towers.map(
-                                tower => (
+                    occupancies={occupancies}
 
-                                    <Box
+                    selectedTower={
+                        selectedTower
+                    }
 
-                                        key={tower.towerId}
-
-                                        onClick={() => {
-
-                                            handleTowerChange(
-                                                tower.towerId
-                                            );
-
-                                            setSelectedFloor(
-                                                null
-                                            );
-
-                                            setSelectedFlat(
-                                                null
-                                            );
-
-                                        }}
-
-                                        sx={{
-
-                                            p: 1.5,
-
-                                            mb: 1,
-
-                                            borderRadius: 2,
-
-                                            cursor: "pointer",
-
-                                            backgroundColor:
-
-                                                selectedTower ===
-                                                    tower.towerId
-
-                                                    ? "#2563eb"
-
-                                                    : "#f8fafc",
-
-                                            color:
-
-                                                selectedTower ===
-                                                    tower.towerId
-
-                                                    ? "#ffffff"
-
-                                                    : "#111827"
-                                        }}
-                                    >
-
-                                        {tower.towerName}
-
-                                    </Box>
-
-                                )
-                            )
-                        }
-
-                    </Box>
-
-                </AppCard>
+                    onTowerChange={
+                        handleTowerChange
+                    }
+                />
 
 
                 {/* CENTRE - FLAT NAVIGATOR */}
@@ -330,7 +305,19 @@ function OccupancyBoard() {
                             alignItems: "center",
                             mb: 2,
                             flexWrap: "wrap",
-                            gap: 1
+                            gap: 1,
+
+                            "&::-webkit-scrollbar": {
+
+                                width: 5
+                            },
+
+                            "&::-webkit-scrollbar-thumb": {
+
+                                background: "#cbd5e1",
+
+                                borderRadius: 10
+                            }
                         }}
                     >
 
@@ -347,44 +334,18 @@ function OccupancyBoard() {
                             }
                         </Typography>
 
-                        <Box
-                            sx={{
-                                display: "flex",
-                                gap: 1,
-                                flexWrap: "wrap"
-                            }}
-                        >
+                        <FloorSelector
 
-                            {
-                                floors.map(
-                                    floor => (
+                            floors={floors}
 
-                                        <Chip
-
-                                            key={floor}
-
-                                            label={`Floor ${floor}`}
-
-                                            clickable
-
-                                            color={
-                                                selectedFloor === floor
-                                                    ? "success"
-                                                    : "default"
-                                            }
-
-                                            onClick={() =>
-                                                handleFloorChange(
-                                                    floor
-                                                )
-                                            }
-                                        />
-
-                                    )
-                                )
+                            selectedFloor={
+                                selectedFloor
                             }
 
-                        </Box>
+                            onFloorChange={
+                                handleFloorChange
+                            }
+                        />
 
                     </Box>
 
@@ -394,7 +355,7 @@ function OccupancyBoard() {
                             display: "grid",
 
                             gridTemplateColumns:
-                                "repeat(auto-fill,minmax(140px,1fr))",
+                                "repeat(auto-fill,minmax(220px,1fr))",
 
                             gap: 2,
 
@@ -429,74 +390,34 @@ function OccupancyBoard() {
 
                                         return (
 
-                                            <AppCard
+                                            <FlatCard
 
                                                 key={
                                                     flat.flatId
                                                 }
 
+                                                flat={
+                                                    flat
+                                                }
+
+                                                occupancy={
+                                                    occupancy
+                                                }
+
+                                                selected={
+                                                    selectedFlat
+                                                        ?.flatId ===
+                                                    flat.flatId
+                                                }
+
                                                 onClick={() =>
+
                                                     setSelectedFlat(
                                                         flat
                                                     )
+
                                                 }
-
-                                                sx={{
-
-                                                    cursor:
-                                                        "pointer",
-
-                                                    minHeight:
-                                                        70,
-
-                                                    background:
-
-                                                        occupied
-
-                                                            ? "linear-gradient(135deg,#ecfdf5,#dcfce7)"
-
-                                                            : "#ffffff",
-
-                                                    border:
-
-                                                        selectedFlat?.flatId ===
-                                                            flat.flatId
-
-                                                            ? "3px solid #2563eb"
-
-                                                            : occupied
-
-                                                                ? "2px solid #16a34a"
-
-                                                                : "2px solid #e5e7eb"
-                                                }}
-                                            >
-
-                                                <Typography
-                                                    fontWeight={700}
-                                                    fontSize={16}
-                                                >
-                                                    {
-                                                        flat.flatNo
-                                                    }
-                                                </Typography>
-
-                                                <Typography
-                                                    sx={{
-                                                        fontSize: 11,
-                                                        color: "#64748b"
-                                                    }}
-                                                >
-                                                    {
-                                                        occupied
-
-                                                            ? occupancy.residentName
-
-                                                            : "Vacant"
-                                                    }
-                                                </Typography>
-
-                                            </AppCard>
+                                            />
 
                                         );
 
@@ -511,142 +432,16 @@ function OccupancyBoard() {
 
                 {/* RIGHT SIDE - DETAILS */}
 
-                {
-                    selectedFlat &&
+                <ResidentDetailPanel
 
-                    <AppCard
-                        sx={{
-                            position: "sticky",
-                            top: 16
-                        }}
-                    >
+                    selectedFlat={
+                        selectedFlat
+                    }
 
-                        {
-                            !selectedFlat ?
-
-                                <Typography
-                                    color="text.secondary"
-                                >
-                                    Select a flat
-                                </Typography>
-
-                                :
-
-                                <>
-                                    <Typography
-                                        variant="h5"
-                                        fontWeight={700}
-                                    >
-                                        {
-                                            selectedFlat.flatNo
-                                        }
-                                    </Typography>
-
-                                    <Typography
-                                        sx={{
-                                            mt: 2
-                                        }}
-                                    >
-                                        Floor :
-                                        {
-                                            selectedFlat.floorNo
-                                        }
-                                    </Typography>
-
-                                    <Typography>
-                                        Status :
-                                        {
-                                            selectedFlat.status
-                                        }
-                                    </Typography>
-
-                                    <Typography
-                                        sx={{
-                                            mt: 3,
-                                            fontWeight: 700
-                                        }}
-                                    >
-                                        Resident
-                                    </Typography>
-
-                                    <Typography>
-                                        {
-                                            selectedOccupancy
-                                                ?.residentName
-                                            ||
-                                            "Vacant"
-                                        }
-                                    </Typography>
-
-                                    <Typography
-                                        sx={{
-                                            mt: 2,
-                                            fontWeight: 700
-                                        }}
-                                    >
-                                        Occupancy Type
-                                    </Typography>
-
-                                    <Typography>
-                                        {
-                                            selectedOccupancy
-                                                ?.occupancyType
-                                            ||
-                                            "-"
-                                        }
-                                    </Typography>
-
-                                    <Typography
-                                        sx={{
-                                            mt: 2,
-                                            fontWeight: 700
-                                        }}
-                                    >
-                                        Occupied Since
-                                    </Typography>
-
-                                    <Typography>
-                                        {
-                                            selectedOccupancy
-                                                ?.startDate
-                                            ||
-                                            "-"
-                                        }
-                                    </Typography>
-
-                                    <Box
-                                        sx={{
-                                            mt: 4,
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            gap: 1
-                                        }}
-                                    >
-
-                                        <Chip
-                                            label="Transfer"
-                                            clickable
-                                            color="primary"
-                                        />
-
-                                        <Chip
-                                            label="Vacate"
-                                            clickable
-                                            color="warning"
-                                        />
-
-                                        <Chip
-                                            label="History"
-                                            clickable
-                                        />
-
-                                    </Box>
-
-                                </>
-                        }
-
-                    </AppCard>
-                }
+                    selectedOccupancy={
+                        selectedOccupancy
+                    }
+                />
             </Box>
 
 
