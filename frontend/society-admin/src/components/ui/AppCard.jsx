@@ -7,11 +7,14 @@ function AppCard({
     children,
     sx = {},
     contentSx = {},
+    ...props
 }) {
 
     return (
 
         <Card
+            {...props}
+            
             elevation={0}
 
             sx={{
