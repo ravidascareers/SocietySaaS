@@ -4,7 +4,7 @@ namespace SocietyManagementAPI.Models
     {
         public int TenantId { get; set; }
 
-        public string BillMonth { get; set; }
+        public string? BillMonth { get; set; }
 
         public DateTime DueDate { get; set; }
     }

@@ -10,8 +10,8 @@ namespace SocietyManagementAPI.Models
 
         public DateTime PaymentDate { get; set; }
 
-        public string PaymentMode { get; set; }
+        public string? PaymentMode { get; set; }
 
-        public string Remarks { get; set; }
+        public string? Remarks { get; set; }
     }
 }

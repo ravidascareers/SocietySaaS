@@ -8,7 +8,7 @@ import TowerPage from "../pages/TowerPage";
 import FlatPage from "../pages/FlatPage";
 import MainLayout from "../layouts/MainLayout";
 import OccupanyBoardPage from "../pages/OccupancyBoardPage";
-
+import MaintenanceRulePage from "../pages/MaintenanceRulePage";
 function AppRoutes() {
     return (
         <BrowserRouter>
@@ -52,8 +52,11 @@ function AppRoutes() {
                         path="/billing"
                         element={<BillingPage />}
                     />
+                    <Route
+                        path="/maintenance-rule"
+                        element={<MaintenanceRulePage />}
+                    />
 
-                     
 
                 </Route>
 
