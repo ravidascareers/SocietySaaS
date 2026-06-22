@@ -9,6 +9,7 @@ import FlatPage from "../pages/FlatPage";
 import MainLayout from "../layouts/MainLayout";
 import OccupanyBoardPage from "../pages/OccupancyBoardPage";
 import MaintenanceRulePage from "../pages/MaintenanceRulePage";
+import MaintenanceRuleBindingPage from "../pages/MaintenanceRuleBindingPage";
 function AppRoutes() {
     return (
         <BrowserRouter>
@@ -52,10 +53,17 @@ function AppRoutes() {
                         path="/billing"
                         element={<BillingPage />}
                     />
-                    
+
                     <Route
                         path="/maintenance-rule"
                         element={<MaintenanceRulePage />}
+                    />
+
+                    <Route
+                        path="/maintenance-rule-binding"
+                        element={
+                            <MaintenanceRuleBindingPage />
+                        }
                     />
                 </Route>
 
