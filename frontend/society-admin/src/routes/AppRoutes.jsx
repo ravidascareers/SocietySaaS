@@ -56,8 +56,6 @@ function AppRoutes() {
                         path="/maintenance-rule"
                         element={<MaintenanceRulePage />}
                     />
-
-
                 </Route>
 
             </Routes>
