@@ -52,6 +52,7 @@ function AppRoutes() {
                         path="/billing"
                         element={<BillingPage />}
                     />
+                    
                     <Route
                         path="/maintenance-rule"
                         element={<MaintenanceRulePage />}
