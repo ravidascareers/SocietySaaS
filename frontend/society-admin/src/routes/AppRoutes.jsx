@@ -61,9 +61,7 @@ function AppRoutes() {
 
                     <Route
                         path="/maintenance-rule-binding"
-                        element={
-                            <MaintenanceRuleBindingPage />
-                        }
+                        element={<MaintenanceRuleBindingPage />}
                     />
                 </Route>
 
