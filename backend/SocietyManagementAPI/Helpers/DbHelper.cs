@@ -145,5 +145,37 @@ namespace SocietyManagementAPI.Helpers
 
             return list;
         }
+
+        public DataSet ExecuteDataSet(
+            string procedureName,
+            params SqlParameter[] parameters)
+        {
+            DataSet ds = new DataSet();
+
+            using SqlConnection con =
+                GetConnection();
+
+            using SqlCommand cmd =
+                new SqlCommand(
+                    procedureName,
+                    con);
+
+            cmd.CommandType =
+                CommandType.StoredProcedure;
+
+            if (parameters != null)
+            {
+                cmd.Parameters.AddRange(parameters);
+            }
+
+            con.Open();
+
+            using SqlDataAdapter da =
+                new SqlDataAdapter(cmd);
+
+            da.Fill(ds);
+
+            return ds;
+        }
     }
 }

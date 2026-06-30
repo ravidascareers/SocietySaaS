@@ -2,10 +2,12 @@ namespace SocietyManagementAPI.Models
 {
     public class GenerateBillRequest
     {
-        public int TenantId { get; set; }
+       public byte BillMonth { get; set; }
 
-        public string? BillMonth { get; set; }
+    public short BillYear { get; set; }
 
-        public DateTime DueDate { get; set; }
+    public DateTime BillDate { get; set; }
+
+    public DateTime DueDate { get; set; }
     }
 }

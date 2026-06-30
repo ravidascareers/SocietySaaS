@@ -11,3 +11,6 @@ export const updateBinding = (id, data) =>
 
 export const deleteBinding = (id) =>
     api.delete(`/maintenancerulebinding/${id}`);
+
+export const getEntitiesByType = (entityType) =>
+    api.get(`/maintenancerulebinding/entities/${entityType}`);

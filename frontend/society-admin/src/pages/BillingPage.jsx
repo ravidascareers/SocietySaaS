@@ -10,13 +10,9 @@ import {
   MenuItem,
 } from "@mui/material";
 
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { DataGrid, GridToolbar, } from "@mui/x-data-grid";
-import jsPDF from "jspdf";
-import QRCode from "qrcode";
+
 import MainLayout from "../layouts/MainLayout";
-import buildingLogo from "../assets/building-logo.png";
 
 import AppPage from "../components/ui/AppPage";
 import AppCard from "../components/ui/AppCard";
@@ -25,6 +21,20 @@ import AppButton from "../components/ui/AppButton";
 import AppDataGrid from "../components/ui/AppDataGrid";
 import ActionChip from "../components/ui/ActionChip";
 import SummaryCard from "../components/ui/SummaryCard";
+
+import { downloadInvoice } from "../services/pdfService";
+import {
+  getBills,
+  generateBills,
+  getBillById
+}
+  from "../services/billingService";
+
+import {
+  collectPayment
+}
+  from "../services/paymentService";
+
 
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
@@ -59,26 +69,44 @@ function BillingPage() {
   const columns = [
 
     {
-      field: "flat",
-      headerName: "Flat",
+      field: "billNo",
+      headerName: "billNo",
       flex: 1,
     },
 
     {
-      field: "owner",
-      headerName: "Owner",
+      field: "towerName",
+      headerName: "towerName",
       flex: 1.5,
     },
 
     {
-      field: "month",
-      headerName: "Month",
+      field: "flatNo",
+      headerName: "flatNo",
+      flex: 1,
+    },
+
+     {
+      field: "residentName",
+      headerName: "residentName",
+      flex: 1,
+    },
+
+     {
+      field: "billMonth",
+      headerName: "billMonth",
+      flex: 1,
+    },
+
+     {
+      field: "billYear",
+      headerName: "billYear",
       flex: 1,
     },
 
     {
-      field: "amount",
-      headerName: "Amount",
+      field: "totalAmount",
+      headerName: "totalAmount",
       flex: 1,
 
       renderCell: (params) => (
@@ -93,14 +121,36 @@ function BillingPage() {
     },
 
     {
-      field: "dueDate",
-      headerName: "Due Date",
+      field: "receivedAmount",
+      headerName: "receivedAmount",
       flex: 1,
 
-      renderCell: (params) =>
-        params.value?.split("T")[0],
+      renderCell: (params) => (
+        <Typography
+          sx={{
+            fontWeight: 700,
+          }}
+        >
+          ₹ {params.value}
+        </Typography>
+      ),
     },
 
+    {
+      field: "outstandingAmount",
+      headerName: "outstandingAmount",
+      flex: 1,
+
+      renderCell: (params) => (
+        <Typography
+          sx={{
+            fontWeight: 700,
+          }}
+        >
+          ₹ {params.value}
+        </Typography>
+      ),
+    },
     {
       field: "status",
 
@@ -266,56 +316,7 @@ function BillingPage() {
         0
       );
 
-  const generateBills = async () => {
 
-    if (!billMonth || !dueDate) {
-
-      alert("Please fill all fields");
-
-      return;
-    }
-
-    try {
-
-      await axios.post(
-        "http://localhost:5008/api/bills/generate",
-        {
-          tenantId: 1,
-          billMonth: billMonth,
-          dueDate: dueDate,
-        }
-      );
-
-      alert("Bills generated successfully");
-      loadBills();
-
-    } catch (error) {
-
-      console.error(error);
-
-      alert("Error generating bills");
-
-    }
-
-  };
-
-  const loadBills = async () => {
-
-    try {
-
-      const response = await axios.get(
-        "http://localhost:5008/api/bills"
-      );
-
-      setBills(response.data);
-
-    } catch (error) {
-
-      console.error(error);
-
-    }
-
-  };
 
   useEffect(() => {
 
@@ -323,60 +324,17 @@ function BillingPage() {
 
   }, []);
 
-  const collectPayment = async () => {
-
-    try {
-
-      await axios.post(
-        "http://localhost:5008/api/payments",
-        {
-          tenantId: 1,
-
-          billId:
-            selectedBill.billId,
-
-          paymentAmount:
-            paymentAmount,
-
-          paymentDate:
-            new Date(),
-
-          paymentMode:
-            paymentMode,
-
-          remarks:
-            remarks,
-        }
-      );
-
-      alert(
-        "Payment collected successfully"
-      );
-
-      setPaymentOpen(false);
-
-      loadBills();
-
-    } catch (error) {
-
-      console.error(error);
-
-      alert("Payment failed");
-
-    }
-
-  };
 
   const sendReminder = (bill) => {
 
     console.log(bill);
 
     const message =
-      `Dear ${bill.owner},
+      `Dear ${bill.residentName},
 
-Your maintenance bill for ${bill.month} is pending.
+Your maintenance bill for ${bill.billMonth} is pending.
 
-Amount Due: ₹ ${bill.amount}
+Amount Due: ₹ ${bill.totalAmount}
 
 Please make the payment at the earliest.
 
@@ -394,247 +352,140 @@ Thank you.`;
 
   const generatePDF = async (bill) => {
 
-    const doc = new jsPDF();
+    try {
 
-    // QR GENERATION
-    const qrData =
-      `PAY|${bill.flat}|${bill.amount}`;
+      const response =
+        await downloadInvoice(
+          bill.billId
+        );
 
-    const qrImage =
-      await QRCode.toDataURL(qrData);
+      const url =
+        window.URL.createObjectURL(
 
-    // PAGE BORDER
-    doc.setDrawColor(180);
+          new Blob(
+            [response.data],
+            {
+              type: "application/pdf"
+            }
+          )
+        );
 
-    doc.rect(
-      8,
-      8,
-      194,
-      280
-    );
+      const link =
+        document.createElement("a");
 
-    // LOGO IMAGE
-    doc.addImage(
-      buildingLogo,
-      "PNG",
-      20,
-      12,
-      24,
-      24
-    );
+      link.href = url;
 
-    // CENTER HEADER
-    doc.setTextColor(0);
+      link.download =
+        `Invoice_${bill.billNo ?? bill.billId}.pdf`;
 
-    doc.setFontSize(22);
+      document.body.appendChild(link);
 
-    doc.text(
-      "DELHI TOWER",
-      105,
-      22,
-      {
-        align: "center",
-      }
-    );
+      link.click();
 
-    doc.setFontSize(11);
+      link.remove();
 
-    doc.text(
-      "Society Maintenance Management",
-      105,
-      30,
-      {
-        align: "center",
-      }
-    );
+      window.URL.revokeObjectURL(url);
 
-    // QR CODE
-    doc.addImage(
-      qrImage,
-      "PNG",
-      160,
-      12,
-      28,
-      28
-    );
+    }
+    catch (err) {
 
-    // QR LABEL
-    doc.setFontSize(8);
+      console.error(err);
 
-    doc.setTextColor(90);
+      alert(
+        "Unable to download invoice."
+      );
+    }
+  };
 
-    doc.text(
-      "Scan To Pay",
-      164,
-      44
-    );
+  const loadBills = async () => {
 
-    // DIVIDER
-    doc.setDrawColor(150);
+    try {
 
-    doc.line(
-      20,
-      50,
-      190,
-      50
-    );
+      const response =
+        await getBills();
 
-    // TITLE
-    doc.setFontSize(18);
+      setBills(response.data);
 
-    doc.setTextColor(0);
+    }
+    catch (err) {
 
-    doc.text(
-      "MAINTENANCE BILL",
-      105,
-      65,
-      {
-        align: "center",
-      }
-    );
+      console.error(err);
 
-    // INFO BOX
-    doc.roundedRect(
-      20,
-      78,
-      170,
-      45,
-      2,
-      2
-    );
+      alert("Unable to load bills.");
 
-    doc.setFontSize(11);
+    }
 
-    doc.text(
-      `Flat No : ${bill.flat}`,
-      28,
-      94
-    );
+  };
 
-    doc.text(
-      `Owner Name : ${bill.owner}`,
-      28,
-      106
-    );
+  const handleGenerateBills = async () => {
 
-    doc.text(
-      `Bill Month : ${bill.month}`,
-      110,
-      94
-    );
+    if (!billMonth || !dueDate) {
 
-    doc.text(
-      `Due Date : ${bill.dueDate?.split("T")[0]
-      }`,
-      110,
-      106
-    );
+      alert("Please fill all fields.");
 
-    // AMOUNT SECTION
-    doc.setFillColor(245, 245, 245);
+      return;
 
-    doc.roundedRect(
-      20,
-      138,
-      170,
-      42,
-      2,
-      2,
-      "F"
-    );
+    }
 
-    doc.setFontSize(13);
+    try {
 
-    doc.setTextColor(90);
+      await generateBills({
 
-    doc.text(
-      "TOTAL AMOUNT DUE",
-      30,
-      156
-    );
+        billMonth,
 
-    doc.setTextColor(0);
+        dueDate
 
-    doc.setFontSize(26);
+      });
 
-    doc.text(
-      `Rs. ${bill.amount}`,
-      122,
-      160
-    );
+      alert("Bills generated successfully.");
 
-    // STATUS
-    doc.setFontSize(11);
+      loadBills();
 
-    doc.setTextColor(0);
+    }
+    catch (err) {
 
-    doc.text(
-      `Status : ${bill.status}`,
-      20,
-      202
-    );
+      console.error(err);
 
-    // PAYMENT INSTRUCTIONS
-    doc.setFontSize(13);
+      alert("Unable to generate bills.");
 
-    doc.text(
-      "Payment Instructions",
-      20,
-      222
-    );
+    }
 
-    doc.setFontSize(10);
+  };
 
-    doc.setTextColor(80);
+  const handleCollectPayment = async () => {
 
-    doc.text(
-      "UPI / Bank Transfer / Cash Accepted",
-      20,
-      235
-    );
+    try {
 
-    doc.text(
-      "UPI ID : payments@delhitower",
-      20,
-      244
-    );
+      await collectPayment({
 
-    doc.text(
-      "Late fee applicable after due date.",
-      20,
-      253
-    );
+        billId:
 
-    // FOOTER
-    doc.setDrawColor(180);
+          selectedBill.billId,
 
-    doc.line(
-      20,
-      265,
-      190,
-      265
-    );
+        paymentAmount,
 
-    doc.setTextColor(120);
+        paymentMode,
 
-    doc.setFontSize(9);
+        remarks
 
-    doc.text(
-      "This is a system generated maintenance invoice.",
-      20,
-      275
-    );
+      });
 
-    doc.text(
-      "Authorized Signatory",
-      145,
-      275
-    );
+      alert(
+        "Payment collected successfully."
+      );
 
-    // SAVE PDF
-    doc.save(
-      `Maintenance_Bill_${bill.flat}.pdf`
-    );
+      setPaymentOpen(false);
+
+      loadBills();
+
+    }
+    catch (err) {
+
+      console.error(err);
+
+      alert("Payment failed.");
+
+    }
 
   };
 
@@ -842,7 +693,7 @@ Thank you.`;
 
             onClick={async () => {
 
-              await generateBills();
+              await handleGenerateBills();
 
               setOpen(false);
 
@@ -943,7 +794,7 @@ Thank you.`;
 
           <AppButton
             variant="contained"
-            onClick={collectPayment}
+            onClick={handleCollectPayment}
           >
             Save Payment
           </AppButton>

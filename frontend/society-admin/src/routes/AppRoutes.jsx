@@ -10,6 +10,8 @@ import MainLayout from "../layouts/MainLayout";
 import OccupanyBoardPage from "../pages/OccupancyBoardPage";
 import MaintenanceRulePage from "../pages/MaintenanceRulePage";
 import MaintenanceRuleBindingPage from "../pages/MaintenanceRuleBindingPage";
+import BillingBoardPage from "../pages/BillingBoardPage";
+
 function AppRoutes() {
     return (
         <BrowserRouter>
@@ -51,7 +53,7 @@ function AppRoutes() {
 
                     <Route
                         path="/billing"
-                        element={<BillingPage />}
+                        element={<BillingBoardPage />}
                     />
 
                     <Route
